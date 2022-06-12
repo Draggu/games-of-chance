@@ -1,0 +1,38 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TestDbModule } from 'helpers/test/test-db.module';
+import { UserEntity } from '../entities/user.entity';
+import { UserService } from '../user.service';
+
+describe('UserService', () => {
+    let service: UserService;
+    let testingModule: TestingModule;
+
+    beforeAll(async () => {
+        testingModule = await Test.createTestingModule({
+            imports: [TestDbModule(), TypeOrmModule.forFeature([UserEntity])],
+            providers: [UserService],
+        }).compile();
+
+        service = testingModule.get<UserService>(UserService);
+    });
+
+    afterAll(() => testingModule.close());
+
+    it('should be defined', () => {
+        expect(service).toBeDefined();
+    });
+
+    it('should create user', async () => {
+        const params = {
+            email: 'test@test.com',
+            name: 'jeff',
+        };
+        const password = '67te8igwsei';
+
+        const user = await service.create({ ...params, password });
+
+        expect(user).toEqual(expect.objectContaining(params));
+        expect(user.password).not.toEqual(password);
+    });
+});
