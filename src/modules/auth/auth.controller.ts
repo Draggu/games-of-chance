@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { DisableAuth } from 'decorators/disable-auth.decorator';
 import { AuthService } from './auth.service';
 import { LoginInput, RegisterInput } from './dto/auth.input';
@@ -9,13 +9,13 @@ export class AuthController {
 
     @Post('login')
     @DisableAuth()
-    login(loginDto: LoginInput) {
+    login(@Body() loginDto: LoginInput) {
         return this.authService.login(loginDto);
     }
 
     @Post('register')
     @DisableAuth()
-    register(registerDto: RegisterInput) {
+    register(@Body() registerDto: RegisterInput) {
         return this.authService.register(registerDto);
     }
 }
