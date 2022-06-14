@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CurrentUser } from 'decorators/current-user.decorator';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../user/entities/user.entity';
 
@@ -10,16 +11,16 @@ export class AlwaysAgreePaymentsService {
         private readonly userRepository: Repository<UserEntity>,
     ) {}
 
-    deposit(currentUser: UserEntity, value: number) {
+    deposit(currentUser: CurrentUser, value: number) {
         return this.updateBalance(currentUser, value, true);
     }
 
-    withdraw(currentUser: UserEntity, value: number) {
+    withdraw(currentUser: CurrentUser, value: number) {
         return this.updateBalance(currentUser, value, false);
     }
 
     private updateBalance(
-        currentUser: UserEntity,
+        currentUser: CurrentUser,
         value: number,
         increment: boolean,
     ) {

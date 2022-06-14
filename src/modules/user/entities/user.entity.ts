@@ -1,14 +1,16 @@
-import { ObjectType, ID, Field, Int } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { hash } from 'bcrypt';
 import {
     BeforeInsert,
     BeforeUpdate,
+    Check,
     Column,
     Entity,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import { hash } from 'bcrypt';
 
 @Entity()
+@Check('"balance" > 0')
 @ObjectType()
 export class UserEntity {
     static readonly saltRound = 10;

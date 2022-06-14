@@ -4,13 +4,13 @@ import {
     Injectable,
     Logger,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
-import { AuthService } from 'modules/auth/auth.service';
-import { Request } from 'express';
 import assert from 'assert';
 import { CurrentUserKey } from 'decorators/current-user.decorator';
-import { Reflector } from '@nestjs/core';
 import { DISABLE_AUTH } from 'decorators/disable-auth.decorator';
+import { Request } from 'express';
+import { AuthService } from 'modules/auth/auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -35,15 +35,13 @@ export class AuthGuard implements CanActivate {
 
         if (contextType === 'http') {
             const request: Request = context.getArgByIndex(0);
-            const token = this.tokenFromRequest(request);
 
-            await this.setUserOnContext(context, token);
+            await this.setUserFromToken(context, request);
         } else if (contextType === 'graphql') {
             const request: Request =
                 GqlExecutionContext.create(context).getContext().req;
-            const token = this.tokenFromRequest(request);
 
-            await this.setUserOnContext(context, token);
+            await this.setUserFromToken(context, request);
         } else {
             this.logger.error(
                 `${AuthGuard.name} received unsupported context type (${contextType})`,
@@ -55,16 +53,22 @@ export class AuthGuard implements CanActivate {
         return true;
     }
 
+    private setUserFromToken(ctx: ExecutionContext, req: Request) {
+        const token = this.tokenFromRequest(req);
+
+        return this.setUserOnContext(ctx, token);
+    }
+
     private tokenFromRequest = (req: Request) =>
         req.header('Authorization')?.replace('Bearer ', '');
 
     private async setUserOnContext(ctx: ExecutionContext, token?: string) {
         assert(token);
 
-        const user = await this.authService.fromToken(token);
+        const { id } = await this.authService.fromToken(token);
 
         Object.assign(ctx, {
-            [CurrentUserKey]: user,
+            [CurrentUserKey]: { id },
         });
     }
 }
