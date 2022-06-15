@@ -1,36 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createHash } from 'crypto';
-import { SecretKeeper } from 'infrastructure/secret-keys/secrets-manager.service';
-import {
-    GameRandomizerService,
-    PRIVATE_KEY_KEEPER,
-    PUBLIC_KEY_KEEPER,
-} from '../game-randomizer.service';
+import { KeyKind } from 'modules/random-keys/consts';
+import { KeysManagerService } from 'modules/random-keys/keys-manager.service';
+import { GameRandomizerService } from '../game-randomizer.service';
 
 describe('GameRandomizerService', () => {
     let service: GameRandomizerService;
-    let publicKeyKeeper: SecretKeeper;
-    let privateKeyKeeper: SecretKeeper;
+    let keysManager: KeysManagerService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 GameRandomizerService,
                 {
-                    provide: PUBLIC_KEY_KEEPER,
+                    provide: KeysManagerService,
                     useValue: {
                         get: jest.fn(
-                            () =>
-                                'ee39b4ceb056c1368cd71fbf628cc4d9c1c59ff403aa45a460352052d32e1c71',
-                        ),
-                    },
-                },
-                {
-                    provide: PRIVATE_KEY_KEEPER,
-                    useValue: {
-                        get: jest.fn(
-                            () =>
-                                '7be34f7e47ca8bd291e662635537ad22a82cd62a7deb5816316c4ddd85a3ec5c',
+                            (key: KeyKind) =>
+                                ({
+                                    [KeyKind.PUBLIC]:
+                                        'ee39b4ceb056c1368cd71fbf628cc4d9c1c59ff403aa45a460352052d32e1c71',
+                                    [KeyKind.PRIVATE]:
+                                        '7be34f7e47ca8bd291e662635537ad22a82cd62a7deb5816316c4ddd85a3ec5c',
+                                }[key]),
                         ),
                     },
                 },
@@ -38,8 +29,7 @@ describe('GameRandomizerService', () => {
         }).compile();
 
         service = module.get<GameRandomizerService>(GameRandomizerService);
-        publicKeyKeeper = module.get<SecretKeeper>(PUBLIC_KEY_KEEPER);
-        privateKeyKeeper = module.get<SecretKeeper>(PRIVATE_KEY_KEEPER);
+        keysManager = module.get<KeysManagerService>(KeysManagerService);
     });
 
     it('should be defined', () => {
@@ -57,8 +47,8 @@ describe('GameRandomizerService', () => {
     it('should request public and private keys', () => {
         service.result(23, 123234);
 
-        expect(publicKeyKeeper.get).toBeCalled();
-        expect(privateKeyKeeper.get).toBeCalled();
+        expect(keysManager.get).toBeCalledWith(KeyKind.PRIVATE);
+        expect(keysManager.get).toBeCalledWith(KeyKind.PUBLIC);
     });
 
     it('should be fairly unique', () => {
@@ -81,11 +71,5 @@ describe('GameRandomizerService', () => {
         const { key } = service.result(10, 767);
 
         expect(key.length).toBe(8);
-    });
-
-    it('should hash key using sha256', () => {
-        const { key, hash } = service.result(10, 767);
-
-        expect(hash).toBe(createHash('sha256').update(key).digest('hex'));
     });
 });

@@ -8,19 +8,19 @@ export class AlwaysAgreePaymentsResolver {
         private readonly alwaysAgreePaymentsService: AlwaysAgreePaymentsService,
     ) {}
 
-    @Mutation(() => Boolean)
+    @Mutation(() => Int)
     deposit(
         @CurrentUser() currentUser: CurrentUser,
         @Args('value', { type: () => Int }) value: number,
-    ) {
+    ): Promise<number> {
         return this.alwaysAgreePaymentsService.deposit(currentUser, value);
     }
 
-    @Mutation(() => Boolean)
+    @Mutation(() => Int)
     withdraw(
         @CurrentUser() currentUser: CurrentUser,
         @Args('value', { type: () => Int }) value: number,
-    ) {
+    ): Promise<number> {
         return this.alwaysAgreePaymentsService.withdraw(currentUser, value);
     }
 }

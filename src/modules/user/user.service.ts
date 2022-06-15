@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CurrentUser } from 'decorators/current-user.decorator';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 
@@ -22,9 +23,9 @@ export class UserService {
         });
     }
 
-    findById(id: string) {
+    findById(currentUser: CurrentUser, id?: string | null) {
         return this.userRepository.findOneOrFail({
-            where: { id },
+            where: { id: id || currentUser.id },
         });
     }
 
@@ -41,13 +42,47 @@ export class UserService {
     }
 
     update(
-        id: string,
+        currentUser: CurrentUser,
         {
             email,
             password,
             name,
         }: { email?: string; password?: string; name?: string },
     ) {
-        return this.userRepository.save({ id, email, password, name });
+        return this.userRepository.save({
+            id: currentUser.id,
+            email,
+            password,
+            name,
+        });
+    }
+
+    deposit(currentUser: CurrentUser, value: number) {
+        return this.updateBalance(currentUser, value, '+');
+    }
+
+    withdraw(currentUser: CurrentUser, value: number) {
+        return this.updateBalance(currentUser, value, '-');
+    }
+
+    private updateBalance(
+        currentUser: CurrentUser,
+        value: number,
+        sign: '+' | '-',
+        entityManager = this.userRepository.manager,
+    ): Promise<number> {
+        return entityManager
+            .createQueryBuilder()
+            .update()
+            .where('id = :id', {
+                id: currentUser.id,
+            })
+            .set({
+                balance: () => `balance ${sign} :value`,
+            })
+            .setParameter('value', value)
+            .returning('balance')
+            .execute()
+            .then((result) => result.raw[0]);
     }
 }

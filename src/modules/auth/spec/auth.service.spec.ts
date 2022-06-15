@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestDbModule } from 'helpers/test/test-db.module';
-import { UserEntity } from 'modules/user/entities/user.entity';
+import { UserService } from 'modules/user/user.service';
 import { AuthService } from '../auth.service';
 
 describe('AuthService', () => {
@@ -10,8 +9,14 @@ describe('AuthService', () => {
 
     beforeAll(async () => {
         testingModule = await Test.createTestingModule({
-            imports: [TestDbModule(), TypeOrmModule.forFeature([UserEntity])],
-            providers: [AuthService],
+            imports: [TestDbModule],
+            providers: [
+                AuthService,
+                {
+                    provide: UserService,
+                    useFactory: () => ({}),
+                },
+            ],
         }).compile();
 
         service = testingModule.get<AuthService>(AuthService);

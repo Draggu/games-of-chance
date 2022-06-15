@@ -1,29 +1,28 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module, ValidationPipe } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { cors } from 'common/cors';
 import { AuthGuard } from 'guards/auth.guard';
-import { RedisModule } from 'infrastructure/redis/redis.module';
-import { SecretKeysModule } from 'infrastructure/secret-keys/secret-keys.module';
 import { AlwaysAgreePaymentsModule } from 'modules/always-agree-payments/always-agree-payments.module';
 import { AuthModule } from 'modules/auth/auth.module';
 import { GameRandomizerModule } from 'modules/game-randomizer/game-randomizer.module';
+import { KeysModule } from 'modules/random-keys/random-keys.module';
 import { UserModule } from 'modules/user/user.module';
-import { PubSubModule } from './infrastructure/pub-sub/pub-sub.module';
 @Module({
     imports: [
         AlwaysAgreePaymentsModule,
         UserModule,
         AuthModule,
         GameRandomizerModule,
-        SecretKeysModule,
-        RedisModule,
-        ConfigModule.forRoot({ expandVariables: true }),
+        KeysModule,
+        ConfigModule.forRoot({ expandVariables: true, isGlobal: true }),
         GraphQLModule.forRootAsync<ApolloDriverConfig>({
             driver: ApolloDriver,
-            useFactory: (config) => ({
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
                 cors,
                 debug: config.get('NODE_ENV') !== 'production',
                 playground: false,
@@ -35,7 +34,20 @@ import { PubSubModule } from './infrastructure/pub-sub/pub-sub.module';
                 fieldResolverEnhancers: ['filters'],
             }),
         }),
-        PubSubModule,
+        TypeOrmModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+                type: 'postgres',
+                host: config.get('DB_URL'),
+                port: config.get('DB_PORT'),
+                username: config.get('DB_USER', 'postgres'),
+                password: config.get('DB_PASSWORD'),
+                database: config.get('DB_NAME'),
+                autoLoadEntities: true,
+                synchronize: config.get('NODE_ENV') !== 'production',
+                dropSchema: config.get('NODE_ENV') !== 'production',
+            }),
+        }),
     ],
     providers: [
         {

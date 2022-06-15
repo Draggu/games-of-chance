@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { KeyKind } from '../consts';
 
 @Entity()
-export class SecretKeyEntity {
+export class RandomKeyEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 

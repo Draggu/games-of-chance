@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'modules/user/user.service';
-import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectRepository(UserEntity)
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
     ) {}
@@ -31,7 +28,7 @@ export class AuthService {
     }
 
     fromToken(token: string) {
-        const id: string = this.jwtService.verify(token).id;
+        const { id } = this.jwtService.verify<{ id: string }>(token);
 
         return this.userService.findById(id);
     }

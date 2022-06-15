@@ -10,7 +10,7 @@ describe('UserService', () => {
 
     beforeAll(async () => {
         testingModule = await Test.createTestingModule({
-            imports: [TestDbModule(), TypeOrmModule.forFeature([UserEntity])],
+            imports: [TestDbModule, TypeOrmModule.forFeature([UserEntity])],
             providers: [UserService],
         }).compile();
 

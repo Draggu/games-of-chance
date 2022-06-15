@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AlwaysAgreePaymentsService } from './always-agree-payments.service';
-import { AlwaysAgreePaymentsResolver } from './always-agree-payments.resolver';
 import { AlwaysAgreePaymentsController } from './always-agree-payments.controller';
+import { AlwaysAgreePaymentsResolver } from './always-agree-payments.resolver';
+import { AlwaysAgreePaymentsService } from './always-agree-payments.service';
 
 @Module({
-  providers: [AlwaysAgreePaymentsResolver, AlwaysAgreePaymentsService],
-  controllers: [AlwaysAgreePaymentsController]
+    providers: [AlwaysAgreePaymentsResolver, AlwaysAgreePaymentsService],
+    controllers: [AlwaysAgreePaymentsController],
 })
 export class AlwaysAgreePaymentsModule {}

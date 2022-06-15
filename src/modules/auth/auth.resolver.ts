@@ -1,4 +1,4 @@
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { DisableAuth } from 'decorators/disable-auth.decorator';
 import { AuthService } from './auth.service';
 import { LoginInput, RegisterInput } from './dto/auth.input';
@@ -10,13 +10,15 @@ export class AuthResolver {
 
     @Mutation(() => AuthPayload)
     @DisableAuth()
-    login(loginInput: LoginInput) {
+    login(@Args('login') loginInput: LoginInput): Promise<AuthPayload> {
         return this.authService.login(loginInput);
     }
 
     @Mutation(() => AuthPayload)
     @DisableAuth()
-    register(registerInput: RegisterInput) {
+    register(
+        @Args('register') registerInput: RegisterInput,
+    ): Promise<AuthPayload> {
         return this.authService.register(registerInput);
     }
 }

@@ -4,14 +4,6 @@
     "compilerOptions": {
         "plugins": [
             {
-                "name": "@nestjs/swagger",
-                "options": {
-                    "classValidatorShim": true,
-                    "introspectComments": true,
-                    "dtoFileNameSuffix": [".input.ts"]
-                }
-            },
-            {
                 "name": "@nestjs/graphql",
                 "options": {
                     "introspectComments": true
