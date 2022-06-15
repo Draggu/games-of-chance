@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { KeysManagerService } from '../keys-manager.service';
+import { SeedsService } from '../seeds.service';
 
-describe('KeysManagerService', () => {
-    let service: KeysManagerService;
+describe('SeedsService', () => {
+    let service: SeedsService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [KeysManagerService],
+            providers: [SeedsService],
         }).compile();
 
-        service = module.get<KeysManagerService>(KeysManagerService);
+        service = module.get<SeedsService>(SeedsService);
     });
 
     it('should be defined', () => {

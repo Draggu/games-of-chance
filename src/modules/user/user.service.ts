@@ -23,9 +23,9 @@ export class UserService {
         });
     }
 
-    findById(currentUser: CurrentUser, id?: string | null) {
+    findById(id: string) {
         return this.userRepository.findOneOrFail({
-            where: { id: id || currentUser.id },
+            where: { id },
         });
     }
 

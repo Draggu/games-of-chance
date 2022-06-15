@@ -22,7 +22,7 @@ export class UserEntity {
     @Column()
     name: string;
 
-    @Column()
+    @Column({ select: false })
     password: string;
 
     @Column()

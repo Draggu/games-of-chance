@@ -13,7 +13,7 @@ export class UserResolver {
         @CurrentUser() currentUser: CurrentUser,
         @Args('id', { type: () => ID, nullable: true }) id?: string | null,
     ): Promise<UserEntity> {
-        return this.userService.findById(currentUser, id);
+        return this.userService.findById(id || currentUser.id);
     }
 
     @Mutation(() => UserEntity)

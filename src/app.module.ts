@@ -9,7 +9,7 @@ import { AuthGuard } from 'guards/auth.guard';
 import { AlwaysAgreePaymentsModule } from 'modules/always-agree-payments/always-agree-payments.module';
 import { AuthModule } from 'modules/auth/auth.module';
 import { GameRandomizerModule } from 'modules/game-randomizer/game-randomizer.module';
-import { KeysModule } from 'modules/random-keys/random-keys.module';
+import { SeedsModule } from 'modules/seeds/seeds.module';
 import { UserModule } from 'modules/user/user.module';
 @Module({
     imports: [
@@ -17,7 +17,7 @@ import { UserModule } from 'modules/user/user.module';
         UserModule,
         AuthModule,
         GameRandomizerModule,
-        KeysModule,
+        SeedsModule,
         ConfigModule.forRoot({ expandVariables: true, isGlobal: true }),
         GraphQLModule.forRootAsync<ApolloDriverConfig>({
             driver: ApolloDriver,

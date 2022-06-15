@@ -20,8 +20,17 @@ class RedisCoreModule {
         return {
             provide: token,
             inject: [ConfigService],
-            useFactory: (config: ConfigService) =>
-                new Redis(config.getOrThrow('REDIS_URL')),
+            useFactory: async (config: ConfigService) => {
+                const redis = new Redis({
+                    lazyConnect: true,
+                    host: config.get('REDIS_HOST'),
+                    port: config.get('REDIS_PORT'),
+                });
+
+                await redis.connect();
+
+                return redis;
+            },
         };
     }
 }

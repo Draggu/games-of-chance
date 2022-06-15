@@ -6,6 +6,8 @@ import { from } from 'rxjs';
 export const REDIS_PUBLISHER = 'REDIS_PUBLISHER';
 export const REDIS_SUBSCRIBER = 'REDIS_SUBSCRIBER';
 
+// TODO
+// eslint-disable-next-line
 interface Subscriptions {}
 
 @Injectable()

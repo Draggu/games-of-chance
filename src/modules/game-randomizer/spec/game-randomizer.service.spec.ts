@@ -1,27 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { KeyKind } from 'modules/random-keys/consts';
-import { KeysManagerService } from 'modules/random-keys/keys-manager.service';
+import { SeedsService } from 'modules/seeds/seeds.service';
 import { GameRandomizerService } from '../game-randomizer.service';
 
 describe('GameRandomizerService', () => {
     let service: GameRandomizerService;
-    let keysManager: KeysManagerService;
+    let keysManager: SeedsService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 GameRandomizerService,
                 {
-                    provide: KeysManagerService,
+                    provide: SeedsService,
                     useValue: {
-                        get: jest.fn(
-                            (key: KeyKind) =>
-                                ({
-                                    [KeyKind.PUBLIC]:
-                                        'ee39b4ceb056c1368cd71fbf628cc4d9c1c59ff403aa45a460352052d32e1c71',
-                                    [KeyKind.PRIVATE]:
-                                        '7be34f7e47ca8bd291e662635537ad22a82cd62a7deb5816316c4ddd85a3ec5c',
-                                }[key]),
+                        getPublicKey: jest.fn(
+                            () =>
+                                'ee39b4ceb056c1368cd71fbf628cc4d9c1c59ff403aa45a460352052d32e1c71',
+                        ),
+                        getPrivateKey: jest.fn(
+                            () =>
+                                '7be34f7e47ca8bd291e662635537ad22a82cd62a7deb5816316c4ddd85a3ec5c',
                         ),
                     },
                 },
@@ -29,7 +27,7 @@ describe('GameRandomizerService', () => {
         }).compile();
 
         service = module.get<GameRandomizerService>(GameRandomizerService);
-        keysManager = module.get<KeysManagerService>(KeysManagerService);
+        keysManager = module.get<SeedsService>(SeedsService);
     });
 
     it('should be defined', () => {
@@ -47,8 +45,8 @@ describe('GameRandomizerService', () => {
     it('should request public and private keys', () => {
         service.result(23, 123234);
 
-        expect(keysManager.get).toBeCalledWith(KeyKind.PRIVATE);
-        expect(keysManager.get).toBeCalledWith(KeyKind.PUBLIC);
+        expect(keysManager.getPublicKey).toBeCalled();
+        expect(keysManager.getPrivateKey).toBeCalled();
     });
 
     it('should be fairly unique', () => {

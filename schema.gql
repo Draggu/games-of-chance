@@ -13,21 +13,34 @@ input LoginInput {
 }
 
 type Mutation {
-  deposit(value: Int!): Boolean!
+  deposit(value: Int!): Int!
   login(login: LoginInput!): AuthPayload!
   register(register: RegisterInput!): AuthPayload!
-  updateUser(id: ID!, updateUser: UpdateUserInput!): UserEntity!
-  withdraw(value: Int!): Boolean!
+  updateUser(updateUser: UpdateUserInput!): UserEntity!
+  withdraw(value: Int!): Int!
+}
+
+input PageInput {
+  skip: Int = 0
+  take: Int = 10
 }
 
 type Query {
-  findUser(id: ID!): UserEntity!
+  findUser(id: ID): UserEntity!
+  seedsHistory(page: PageInput!): [SeedEntity!]!
 }
 
 input RegisterInput {
   email: String!
   name: String!
   password: String!
+}
+
+type SeedEntity {
+  day: String!
+  id: Float!
+  privateKey: String!
+  publicKey: String!
 }
 
 input UpdateUserInput {
