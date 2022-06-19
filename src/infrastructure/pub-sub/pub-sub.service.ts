@@ -1,14 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Subscriptions } from 'common/subscriptions.interface';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 import { from } from 'rxjs';
 
 export const REDIS_PUBLISHER = 'REDIS_PUBLISHER';
 export const REDIS_SUBSCRIBER = 'REDIS_SUBSCRIBER';
-
-// TODO
-// eslint-disable-next-line
-interface Subscriptions {}
 
 @Injectable()
 export class PubSubService {
@@ -48,7 +45,7 @@ export class PubSubService {
 
     asyncIterator<T extends keyof Subscriptions>(
         triggers: T | T[],
-    ): AsyncIterator<Subscriptions[T], unknown, undefined> {
+    ): AsyncIterator<Pick<Subscriptions, T>, unknown, undefined> {
         return this.pubsub.asyncIterator(triggers);
     }
 

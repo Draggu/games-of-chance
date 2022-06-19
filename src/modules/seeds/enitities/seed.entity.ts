@@ -1,5 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { RouletteRollEntity } from 'modules/games/roulette/entities/roulette-roll.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -19,4 +20,9 @@ export class SeedEntity {
 
     @Column()
     publicKey: string;
+
+    // games
+
+    @OneToMany(() => RouletteRollEntity, (roll) => roll.seed)
+    rouletteRoll: RouletteRollEntity;
 }

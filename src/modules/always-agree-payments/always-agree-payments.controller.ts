@@ -11,16 +11,16 @@ export class AlwaysAgreePaymentsController {
     @Post('deposit')
     deposit(
         @CurrentUser() currentUser: CurrentUser,
-        @Body('value', ParseIntPipe) value: number,
+        @Body('amount', ParseIntPipe) amount: number,
     ) {
-        return this.alwaysAgreePaymentsService.deposit(currentUser, value);
+        return this.alwaysAgreePaymentsService.deposit(currentUser, amount);
     }
 
     @Post('withdraw')
     withdraw(
         @CurrentUser() currentUser: CurrentUser,
-        @Body('value', ParseIntPipe) value: number,
+        @Body('amount', ParseIntPipe) amount: number,
     ) {
-        return this.alwaysAgreePaymentsService.withdraw(currentUser, value);
+        return this.alwaysAgreePaymentsService.withdraw(currentUser, amount);
     }
 }

@@ -6,11 +6,11 @@ import { UserService } from 'modules/user/user.service';
 export class AlwaysAgreePaymentsService {
     constructor(private readonly userService: UserService) {}
 
-    deposit(currentUser: CurrentUser, value: number) {
-        return this.userService.deposit(currentUser, value);
+    deposit(currentUser: CurrentUser, amount: number) {
+        return this.userService.deposit(currentUser, amount);
     }
 
-    withdraw(currentUser: CurrentUser, value: number) {
-        return this.userService.withdraw(currentUser, value);
+    withdraw(currentUser: CurrentUser, amount: number) {
+        return this.userService.withdraw(currentUser, amount);
     }
 }

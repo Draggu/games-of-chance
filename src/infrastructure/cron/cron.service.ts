@@ -1,16 +1,26 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { CronJob } from 'cron';
 import Redis from 'ioredis';
 import Redlock from 'redlock';
 
 @Injectable()
-export class CronService {
+export class CronService implements OnApplicationBootstrap {
     private readonly logger = new Logger(CronService.name);
 
     constructor(
         private readonly redlock: Redlock,
         private readonly redis: Redis,
     ) {}
+
+    private jobs: CronJob[] = [];
+
+    onApplicationBootstrap() {
+        this.jobs.forEach((job) => {
+            if (!job.running) {
+                job.start();
+            }
+        });
+    }
 
     schedule(
         cronExpr: string,
@@ -20,7 +30,7 @@ export class CronService {
     ) {
         const job = new CronJob(cronExpr, async () => {
             await this.redlock
-                .using([name], time, async () => {
+                .using([`${name}-Lock`], time, async () => {
                     const nextRunDate = await this.redis.get(name);
                     const time = +(nextRunDate || 0);
                     const now = new Date();
@@ -42,7 +52,7 @@ export class CronService {
                 });
         });
 
-        job.start();
+        this.jobs.push(job);
 
         return job;
     }

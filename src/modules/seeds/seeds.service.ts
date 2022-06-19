@@ -11,16 +11,44 @@ import { SeedEntity } from './enitities/seed.entity';
 export class SeedsService implements OnModuleInit {
     constructor(
         @InjectRepository(SeedEntity)
-        private readonly keyRepository: Repository<SeedEntity>,
+        private readonly seedRepository: Repository<SeedEntity>,
         private readonly cronService: CronService,
     ) {}
 
     private lastSeed: SeedEntity;
 
     async onModuleInit() {
-        await this.loadSeed();
+        try {
+            this.lastSeed = await this.seedRepository.findOneOrFail({
+                order: {
+                    day: 'DESC',
+                },
+                where: {},
+            });
+        } catch {
+            this.lastSeed = await this.seedRepository
+                .insert({
+                    id: 1,
+                    privateKey: this.generateKey(),
+                    publicKey: this.generateKey(),
+                })
+                .then(({ generatedMaps }) => generatedMaps[0] as SeedEntity);
+        }
 
-        this.scheduleKeyCreation();
+        this.cronService.schedule('0 0 * * *', 'seed-creation', (done) =>
+            this.seedRepository.manager.transaction((manager) =>
+                manager
+                    .insert(SeedEntity, {
+                        privateKey: this.generateKey(),
+                        publicKey: this.generateKey(),
+                    })
+                    .then(done),
+            ),
+        );
+    }
+
+    getSeedId() {
+        return this.lastSeed.id;
     }
 
     getPublicKey() {
@@ -35,32 +63,8 @@ export class SeedsService implements OnModuleInit {
         return randomBytes(32).toString('hex');
     }
 
-    private scheduleKeyCreation() {
-        this.cronService.schedule('0 0 * * *', 'keys-creation', (done) =>
-            this.keyRepository.manager.transaction((manager) =>
-                manager
-                    .insert(SeedEntity, {
-                        privateKey: this.generateKey(),
-                        publicKey: this.generateKey(),
-                    })
-                    .then(done),
-            ),
-        );
-    }
-
-    private async loadSeed() {
-        const [seed] = await this.keyRepository.find({
-            order: {
-                day: 'DESC',
-            },
-            take: 1,
-        });
-
-        this.lastSeed = seed;
-    }
-
     async findSeeds({ take, skip }: PageInput) {
-        const seeds = await this.keyRepository.find({
+        const seeds = await this.seedRepository.find({
             order: {
                 day: 'DESC',
             },

@@ -1,11 +1,15 @@
 import { InputType, PickType } from '@nestjs/graphql';
-import { IsEmail } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 @InputType()
 export class RegisterInput {
     @IsEmail()
     email: string;
+
+    @IsString()
     name: string;
+
+    @IsString()
     password: string;
 }
 

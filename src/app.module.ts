@@ -11,6 +11,8 @@ import { AuthModule } from 'modules/auth/auth.module';
 import { GameRandomizerModule } from 'modules/game-randomizer/game-randomizer.module';
 import { SeedsModule } from 'modules/seeds/seeds.module';
 import { UserModule } from 'modules/user/user.module';
+import { join } from 'path';
+import { GamesModule } from './modules/games/games.module';
 @Module({
     imports: [
         AlwaysAgreePaymentsModule,
@@ -18,6 +20,7 @@ import { UserModule } from 'modules/user/user.module';
         AuthModule,
         GameRandomizerModule,
         SeedsModule,
+        GamesModule,
         ConfigModule.forRoot({ expandVariables: true, isGlobal: true }),
         GraphQLModule.forRootAsync<ApolloDriverConfig>({
             driver: ApolloDriver,
@@ -38,14 +41,18 @@ import { UserModule } from 'modules/user/user.module';
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
                 type: 'postgres',
-                host: config.get('DB_URL'),
+                host: config.get('DB_HOST'),
                 port: config.get('DB_PORT'),
                 username: config.get('DB_USER', 'postgres'),
                 password: config.get('DB_PASSWORD'),
                 database: config.get('DB_NAME'),
                 autoLoadEntities: true,
+                migrations: [join(__dirname, '../migrations/*.{ts,js}')],
+                migrationsRun: true,
                 synchronize: config.get('NODE_ENV') !== 'production',
-                dropSchema: config.get('NODE_ENV') !== 'production',
+                logging: config.get('NODE_ENV') !== 'production',
+                subscribers: [join(__dirname, '/**/*.subscriber.{ts,js}')],
+                //dropSchema: true,
             }),
         }),
     ],

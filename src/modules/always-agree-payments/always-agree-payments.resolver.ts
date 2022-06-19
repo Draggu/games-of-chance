@@ -11,16 +11,16 @@ export class AlwaysAgreePaymentsResolver {
     @Mutation(() => Int)
     deposit(
         @CurrentUser() currentUser: CurrentUser,
-        @Args('value', { type: () => Int }) value: number,
+        @Args('amount', { type: () => Int }) amount: number,
     ): Promise<number> {
-        return this.alwaysAgreePaymentsService.deposit(currentUser, value);
+        return this.alwaysAgreePaymentsService.deposit(currentUser, amount);
     }
 
     @Mutation(() => Int)
     withdraw(
         @CurrentUser() currentUser: CurrentUser,
-        @Args('value', { type: () => Int }) value: number,
+        @Args('amount', { type: () => Int }) amount: number,
     ): Promise<number> {
-        return this.alwaysAgreePaymentsService.withdraw(currentUser, value);
+        return this.alwaysAgreePaymentsService.withdraw(currentUser, amount);
     }
 }

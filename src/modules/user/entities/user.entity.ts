@@ -1,16 +1,15 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
-import { hash } from 'bcrypt';
+import { RouletteBetEntity } from 'modules/games/roulette/entities/roulette-bet.entity';
 import {
-    BeforeInsert,
-    BeforeUpdate,
     Check,
     Column,
     Entity,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
-@Check('"balance" > 0')
+@Check('"balance" >= 0')
 @ObjectType()
 export class UserEntity {
     static readonly saltRound = 10;
@@ -28,17 +27,12 @@ export class UserEntity {
     @Column()
     email: string;
 
-    @Column('integer', {
-        default: 0,
-    })
+    @Column({ type: 'integer', default: 0 })
     @Field(() => Int)
     balance: number;
 
-    @BeforeInsert()
-    @BeforeUpdate()
-    private async hashPassword() {
-        if (this.password) {
-            this.password = await hash(this.password, UserEntity.saltRound);
-        }
-    }
+    // bets history
+
+    @OneToMany(() => RouletteBetEntity, (bet) => bet.user)
+    rouletteBets: RouletteBetEntity[];
 }

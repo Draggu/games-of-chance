@@ -57,32 +57,36 @@ export class UserService {
         });
     }
 
-    deposit(currentUser: CurrentUser, value: number) {
-        return this.updateBalance(currentUser, value, '+');
+    deposit(currentUser: CurrentUser, amount: number) {
+        return this.updateBalance(currentUser, amount, '+');
     }
 
-    withdraw(currentUser: CurrentUser, value: number) {
-        return this.updateBalance(currentUser, value, '-');
+    withdraw(currentUser: CurrentUser, amount: number) {
+        return this.updateBalance(currentUser, amount, '-');
     }
 
     private updateBalance(
         currentUser: CurrentUser,
-        value: number,
+        amount: number,
         sign: '+' | '-',
-        entityManager = this.userRepository.manager,
     ): Promise<number> {
-        return entityManager
-            .createQueryBuilder()
-            .update()
-            .where('id = :id', {
-                id: currentUser.id,
+        return this.updateBalanceParamLessQuery(sign)
+            .where(`id = :userId`)
+            .setParameters({
+                userId: currentUser.id,
+                amount,
             })
-            .set({
-                balance: () => `balance ${sign} :value`,
-            })
-            .setParameter('value', value)
             .returning('balance')
             .execute()
             .then((result) => result.raw[0]);
+    }
+
+    updateBalanceParamLessQuery(sign: '+' | '-', amount = ':amount') {
+        return this.userRepository.manager
+            .createQueryBuilder()
+            .update(UserEntity)
+            .set({
+                balance: () => `balance ${sign} ${amount}`,
+            });
     }
 }
