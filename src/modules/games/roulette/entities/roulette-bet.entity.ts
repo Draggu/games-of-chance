@@ -8,7 +8,7 @@ import {
     PrimaryGeneratedColumn,
     RelationId,
 } from 'typeorm';
-import { BetColor } from '../consts';
+import { RouletteBetColor, RouletteBetColorDbName } from '../consts';
 import { RouletteRollEntity } from './roulette-roll.entity';
 
 @Entity()
@@ -44,9 +44,13 @@ export class RouletteBetEntity {
     @Field(() => Int)
     amount: number;
 
-    @Column({ type: 'enum', enum: BetColor, enumName: 'BetColor' })
-    @Field(() => BetColor)
-    color: BetColor;
+    @Column({
+        type: 'enum',
+        enum: RouletteBetColor,
+        enumName: RouletteBetColorDbName,
+    })
+    @Field(() => RouletteBetColor)
+    color: RouletteBetColor;
 
     @Column({ default: false, nullable: false })
     @HideField()

@@ -3,7 +3,7 @@ import {
     EventSubscriber,
     InsertEvent,
 } from 'typeorm';
-import { BetColor } from '../consts';
+import { RouletteBetColor } from '../consts';
 import { RouletteRollEntity } from '../entities/roulette-roll.entity';
 import { RouletteStatsEntity } from '../entities/roulette-stats.entity';
 
@@ -16,11 +16,11 @@ export class RollSubscriber
     }
 
     afterInsert(event: InsertEvent<RouletteRollEntity>) {
-        const color: BetColor = event.metadata.propertiesMap.color;
+        const color: RouletteBetColor = event.metadata.propertiesMap.color;
         const updateColumnName: keyof RouletteStatsEntity =
-            color === BetColor.GREEN
+            color === RouletteBetColor.GREEN
                 ? 'greenCount'
-                : color === BetColor.RED
+                : color === RouletteBetColor.RED
                 ? 'redCount'
                 : 'blackCount';
 

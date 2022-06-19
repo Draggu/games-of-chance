@@ -1,5 +1,4 @@
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
-import { Exclude } from 'class-transformer';
 import { RouletteRollEntity } from 'modules/games/roulette/entities/roulette-roll.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -27,6 +26,5 @@ export class SeedEntity {
 
     @OneToMany(() => RouletteRollEntity, (roll) => roll.seed)
     @HideField()
-    @Exclude()
     rouletteRoll: RouletteRollEntity[];
 }

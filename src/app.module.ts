@@ -35,6 +35,7 @@ import { GamesModule } from './modules/games/games.module';
                     'graphql-ws': true,
                 },
                 fieldResolverEnhancers: ['filters'],
+                context: ({ req }) => ({ req }),
             }),
         }),
         TypeOrmModule.forRootAsync({

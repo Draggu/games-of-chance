@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsEnum, IsInt, IsPositive } from 'class-validator';
-import { BetColor } from '../consts';
+import { RouletteBetColor } from '../consts';
 
 @InputType()
 export class PlaceBetInput {
@@ -9,7 +9,7 @@ export class PlaceBetInput {
     @Field(() => Int)
     amount: number;
 
-    @Field(() => BetColor)
-    @IsEnum(BetColor)
-    color: BetColor;
+    @Field(() => RouletteBetColor)
+    @IsEnum(RouletteBetColor)
+    color: RouletteBetColor;
 }

@@ -69,8 +69,9 @@ export class UserService {
         currentUser: CurrentUser,
         amount: number,
         sign: '+' | '-',
+        manager = this.userRepository.manager,
     ): Promise<number> {
-        return this.updateBalanceParamLessQuery(sign)
+        return this.updateBalanceParamLessQuery(sign, ':amount', manager)
             .where(`id = :userId`)
             .setParameters({
                 userId: currentUser.id,
@@ -81,8 +82,12 @@ export class UserService {
             .then((result) => result.raw[0]);
     }
 
-    updateBalanceParamLessQuery(sign: '+' | '-', amount = ':amount') {
-        return this.userRepository.manager
+    updateBalanceParamLessQuery(
+        sign: '+' | '-',
+        amount = ':amount',
+        manager = this.userRepository.manager,
+    ) {
+        return manager
             .createQueryBuilder()
             .update(UserEntity)
             .set({

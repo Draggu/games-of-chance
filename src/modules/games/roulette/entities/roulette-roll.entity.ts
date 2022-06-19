@@ -1,5 +1,4 @@
 import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
-import { Exclude, Expose } from 'class-transformer';
 import { SeedEntity } from 'modules/seeds/enitities/seed.entity';
 import {
     Column,
@@ -12,7 +11,7 @@ import {
     PrimaryGeneratedColumn,
     RelationId,
 } from 'typeorm';
-import { BetColor } from '../consts';
+import { RouletteBetColor, RouletteBetColorDbName } from '../consts';
 import { RouletteBetEntity } from './roulette-bet.entity';
 
 @Entity()
@@ -20,9 +19,6 @@ import { RouletteBetEntity } from './roulette-bet.entity';
 export class RouletteRollEntity {
     @PrimaryGeneratedColumn('increment')
     @Field(() => Int, {
-        name: 'nonce',
-    })
-    @Expose({
         name: 'nonce',
     })
     id: number;
@@ -33,24 +29,25 @@ export class RouletteRollEntity {
 
     @Column({
         type: 'enum',
-        enum: BetColor,
-        enumName: 'BetColor',
+        enum: RouletteBetColor,
+        enumName: RouletteBetColorDbName,
         asExpression: `(
             CASE 
-                WHEN winning = 14 THEN '${BetColor.GREEN}'::"BetColor"
-                WHEN winning % 2 = 0 THEN '${BetColor.BLACK}'::"BetColor"
-                ELSE '${BetColor.RED}'::"BetColor"
+                WHEN winning = 14 THEN
+                    '${RouletteBetColor.GREEN}'::"${RouletteBetColorDbName}"
+                WHEN winning % 2 = 0 THEN
+                    '${RouletteBetColor.BLACK}'::"${RouletteBetColorDbName}"
+                ELSE  '${RouletteBetColor.RED}'::"${RouletteBetColorDbName}"
             END
         )`,
         generatedType: 'STORED',
         generatedIdentity: 'ALWAYS',
     })
-    color: BetColor;
+    color: RouletteBetColor;
 
     @ManyToOne(() => SeedEntity, (seed) => seed.rouletteRoll)
     @JoinColumn({ name: 'seedId' })
     @HideField()
-    @Exclude()
     seed: SeedEntity;
 
     @RelationId((roll: RouletteRollEntity) => roll.seed)

@@ -35,15 +35,21 @@ export class SeedsService implements OnModuleInit {
                 .then(({ generatedMaps }) => generatedMaps[0] as SeedEntity);
         }
 
-        this.cronService.schedule('0 0 * * *', 'seed-creation', (done) =>
-            this.seedRepository.manager.transaction((manager) =>
-                manager
-                    .insert(SeedEntity, {
-                        privateKey: this.generateKey(),
-                        publicKey: this.generateKey(),
-                    })
-                    .then(done),
-            ),
+        this.cronService.schedule(
+            '0 0 * * *',
+            'seed-creation',
+            async (done) => {
+                await this.seedRepository.manager.transaction(
+                    async (manager) => {
+                        await manager.insert(SeedEntity, {
+                            privateKey: this.generateKey(),
+                            publicKey: this.generateKey(),
+                        });
+
+                        await done();
+                    },
+                );
+            },
         );
     }
 

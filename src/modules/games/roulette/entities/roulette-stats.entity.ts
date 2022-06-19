@@ -1,5 +1,4 @@
 import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
-import { Exclude } from 'class-transformer';
 import { OneRowTable } from 'helpers/one-row-table';
 import { Column, Entity } from 'typeorm';
 
@@ -8,7 +7,6 @@ import { Column, Entity } from 'typeorm';
 export class RouletteStatsEntity {
     @OneRowTable()
     @HideField()
-    @Exclude()
     id: number;
 
     @Column({

@@ -1,11 +1,13 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-export enum BetColor {
+export enum RouletteBetColor {
     RED = 'red',
     GREEN = 'green',
     BLACK = 'black',
 }
 
-registerEnumType(BetColor, {
-    name: 'BetColor',
+export const RouletteBetColorDbName = 'RouletteBetColor';
+
+registerEnumType(RouletteBetColor, {
+    name: 'RouletteBetColor',
 });

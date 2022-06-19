@@ -8,5 +8,6 @@ export class UpdateUserInput {
     @ValidateIf((o: UpdateUserInput) => typeof o.email === 'string')
     @IsEmail()
     email?: string;
+
     password?: string;
 }

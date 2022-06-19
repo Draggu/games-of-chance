@@ -7,7 +7,6 @@ import { UserModule } from 'modules/user/user.module';
 import { RouletteBetEntity } from './entities/roulette-bet.entity';
 import { RouletteRollEntity } from './entities/roulette-roll.entity';
 import { RouletteStatsEntity } from './entities/roulette-stats.entity';
-import { RouletteController } from './roulette.controller';
 import { RouletteResolver } from './roulette.resolver';
 import { RouletteCommonService } from './services/roulette-common.service';
 import { RouletteSchedulerService } from './services/roulette-scheduler.service';
@@ -35,6 +34,5 @@ import { RollSubscriber } from './subscribers/roll.subscriber';
         BetSubscriber,
         RollSubscriber,
     ],
-    controllers: [RouletteController],
 })
 export class RouletteModule {}
