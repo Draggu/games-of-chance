@@ -1,4 +1,4 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
 import { UserEntity } from 'modules/user/entities/user.entity';
 import {
     Column,
@@ -15,6 +15,7 @@ import { RouletteRollEntity } from './roulette-roll.entity';
 @ObjectType()
 export class RouletteBetEntity {
     @PrimaryGeneratedColumn('increment')
+    @Field(() => ID)
     id: number;
 
     @ManyToOne(() => UserEntity, (user) => user.rouletteBets, {
@@ -40,6 +41,7 @@ export class RouletteBetEntity {
     rollId: string;
 
     @Column({ type: 'integer' })
+    @Field(() => Int)
     amount: number;
 
     @Column({ type: 'enum', enum: BetColor, enumName: 'BetColor' })

@@ -38,7 +38,7 @@ input PageInput {
 }
 
 input PlaceBetInput {
-  amount: Float!
+  amount: Int!
   color: BetColor!
 }
 
@@ -56,16 +56,16 @@ input RegisterInput {
 }
 
 type RouletteBetEntity {
-  amount: Float!
+  amount: Int!
   color: BetColor!
-  id: Float!
+  id: ID!
 }
 
 type RouletteRollEntity {
   color: BetColor!
-  id: Float!
+  nonce: Int!
   timestamp: DateTime!
-  winning: Float!
+  winning: Int!
 }
 
 type RouletteStatsEntity {
@@ -76,10 +76,9 @@ type RouletteStatsEntity {
 
 type SeedEntity {
   day: String!
-  id: Float!
+  id: ID!
   privateKey: String!
   publicKey: String!
-  rouletteRoll: RouletteRollEntity!
 }
 
 input UpdateUserInput {

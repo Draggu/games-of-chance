@@ -1,5 +1,5 @@
-import { HideField, ObjectType } from '@nestjs/graphql';
-import { Exclude } from 'class-transformer';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
+import { Exclude, Expose } from 'class-transformer';
 import { SeedEntity } from 'modules/seeds/enitities/seed.entity';
 import {
     Column,
@@ -19,9 +19,16 @@ import { RouletteBetEntity } from './roulette-bet.entity';
 @ObjectType()
 export class RouletteRollEntity {
     @PrimaryGeneratedColumn('increment')
+    @Field(() => Int, {
+        name: 'nonce',
+    })
+    @Expose({
+        name: 'nonce',
+    })
     id: number;
 
     @Column({ type: 'smallint', nullable: false })
+    @Field(() => Int)
     winning: number;
 
     @Column({

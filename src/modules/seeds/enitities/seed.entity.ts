@@ -1,4 +1,5 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
+import { Exclude } from 'class-transformer';
 import { RouletteRollEntity } from 'modules/games/roulette/entities/roulette-roll.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -6,6 +7,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @ObjectType()
 export class SeedEntity {
     @PrimaryGeneratedColumn('increment')
+    @Field(() => ID)
     id: number;
 
     @Column({
@@ -24,5 +26,7 @@ export class SeedEntity {
     // games
 
     @OneToMany(() => RouletteRollEntity, (roll) => roll.seed)
-    rouletteRoll: RouletteRollEntity;
+    @HideField()
+    @Exclude()
+    rouletteRoll: RouletteRollEntity[];
 }
