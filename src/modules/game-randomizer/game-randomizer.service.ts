@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { createHmac } from 'crypto';
-import { SeedsService } from 'modules/seeds/seeds.service';
+import { createHmac, randomBytes } from 'crypto';
 @Injectable()
 export class GameRandomizerService {
-    constructor(private readonly seedsService: SeedsService) {}
-
-    seedId() {
-        return this.seedsService.getSeedId();
+    generateKey() {
+        return randomBytes(32).toString('hex');
     }
 
-    result(n: number, nonce: string | number): { key: string; roll: number } {
-        const clientSeed = this.seedsService.getPublicKey();
-        const serverSeed = this.seedsService.getPrivateKey();
-        const seed = [serverSeed, clientSeed, nonce].join('-');
+    result(
+        privateKey: string,
+        publicKey: string,
+        n: number,
+        nonce: string | number,
+    ): { key: string; roll: number } {
+        const seed = [privateKey, publicKey, nonce].join('-');
 
         const subHash = createHmac('sha256', seed)
             .digest('hex')

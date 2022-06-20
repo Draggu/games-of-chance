@@ -8,8 +8,6 @@ import { cors } from 'common/cors';
 import { AuthGuard } from 'guards/auth.guard';
 import { AlwaysAgreePaymentsModule } from 'modules/always-agree-payments/always-agree-payments.module';
 import { AuthModule } from 'modules/auth/auth.module';
-import { GameRandomizerModule } from 'modules/game-randomizer/game-randomizer.module';
-import { SeedsModule } from 'modules/seeds/seeds.module';
 import { UserModule } from 'modules/user/user.module';
 import { join } from 'path';
 import { GamesModule } from './modules/games/games.module';
@@ -18,8 +16,6 @@ import { GamesModule } from './modules/games/games.module';
         AlwaysAgreePaymentsModule,
         UserModule,
         AuthModule,
-        GameRandomizerModule,
-        SeedsModule,
         GamesModule,
         ConfigModule.forRoot({ expandVariables: true, isGlobal: true }),
         GraphQLModule.forRootAsync<ApolloDriverConfig>({
@@ -53,7 +49,7 @@ import { GamesModule } from './modules/games/games.module';
                 synchronize: config.get('NODE_ENV') !== 'production',
                 logging: config.get('NODE_ENV') !== 'production',
                 subscribers: [join(__dirname, '/**/*.subscriber.{ts,js}')],
-                //dropSchema: true,
+                // dropSchema: true,
             }),
         }),
     ],

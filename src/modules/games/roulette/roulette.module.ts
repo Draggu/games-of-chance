@@ -6,10 +6,13 @@ import { GameRandomizerModule } from 'modules/game-randomizer/game-randomizer.mo
 import { UserModule } from 'modules/user/user.module';
 import { RouletteBetEntity } from './entities/roulette-bet.entity';
 import { RouletteRollEntity } from './entities/roulette-roll.entity';
+import { RouletteSeedEntity } from './entities/roulette-seed.entity';
 import { RouletteStatsEntity } from './entities/roulette-stats.entity';
 import { RouletteResolver } from './roulette.resolver';
-import { RouletteCommonService } from './services/roulette-common.service';
-import { RouletteSchedulerService } from './services/roulette-scheduler.service';
+import { RouletteGameResultsScheduler } from './schedulers/game-results.scheduler';
+import { RouletteSeedScheduler } from './schedulers/game-seed.scheduler';
+import { RouletteGameStartScheduler } from './schedulers/game-start.scheduler';
+import { RouletteTimesService } from './services/roulette-times.service';
 import { RouletteService } from './services/roulette.service';
 import { BetSubscriber } from './subscribers/bet.subscriber';
 import { RollSubscriber } from './subscribers/roll.subscriber';
@@ -24,15 +27,18 @@ import { RollSubscriber } from './subscribers/roll.subscriber';
             RouletteBetEntity,
             RouletteRollEntity,
             RouletteStatsEntity,
+            RouletteSeedEntity,
         ]),
     ],
     providers: [
         RouletteResolver,
         RouletteService,
-        RouletteSchedulerService,
-        RouletteCommonService,
+        RouletteTimesService,
         BetSubscriber,
         RollSubscriber,
+        RouletteGameResultsScheduler,
+        RouletteGameStartScheduler,
+        RouletteSeedScheduler,
     ],
 })
 export class RouletteModule {}

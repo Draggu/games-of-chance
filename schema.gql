@@ -40,7 +40,7 @@ type Query {
   findUser(id: ID): UserEntity!
   rouletteHistory(page: PageInput = {}): [RouletteRollEntity!]!
   rouletteStats: RouletteStatsEntity!
-  seedsHistory(page: PageInput!): [SeedEntity!]!
+  seedsHistory(page: PageInput!): [RouletteSeedEntity!]!
 }
 
 input RegisterInput {
@@ -68,17 +68,17 @@ type RouletteRollEntity {
   winning: Int!
 }
 
-type RouletteStatsEntity {
-  blackCount: Int!
-  greenCount: Int!
-  redCount: Int!
-}
-
-type SeedEntity {
+type RouletteSeedEntity {
   day: String!
   id: ID!
   privateKey: String!
   publicKey: String!
+}
+
+type RouletteStatsEntity {
+  blackCount: Int!
+  greenCount: Int!
+  redCount: Int!
 }
 
 type Subscription {

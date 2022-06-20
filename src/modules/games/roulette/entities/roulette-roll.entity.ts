@@ -1,5 +1,5 @@
 import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
-import { SeedEntity } from 'modules/seeds/enitities/seed.entity';
+import { RouletteSeedEntity } from 'modules/games/roulette/entities/roulette-seed.entity';
 import {
     Column,
     CreateDateColumn,
@@ -14,7 +14,11 @@ import {
 import { RouletteBetColor, RouletteBetColorDbName } from '../consts';
 import { RouletteBetEntity } from './roulette-bet.entity';
 
-@Entity()
+@Entity({
+    orderBy: {
+        timestamp: 'DESC',
+    },
+})
 @ObjectType()
 export class RouletteRollEntity {
     @PrimaryGeneratedColumn('increment')
@@ -45,10 +49,10 @@ export class RouletteRollEntity {
     })
     color: RouletteBetColor;
 
-    @ManyToOne(() => SeedEntity, (seed) => seed.rouletteRoll)
+    @ManyToOne(() => RouletteSeedEntity, (seed) => seed.rouletteRoll)
     @JoinColumn({ name: 'seedId' })
     @HideField()
-    seed: SeedEntity;
+    seed: RouletteSeedEntity;
 
     @RelationId((roll: RouletteRollEntity) => roll.seed)
     @HideField()

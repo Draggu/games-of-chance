@@ -2,9 +2,13 @@ import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import { RouletteRollEntity } from 'modules/games/roulette/entities/roulette-roll.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({
+    orderBy: {
+        day: 'DESC',
+    },
+})
 @ObjectType()
-export class SeedEntity {
+export class RouletteSeedEntity {
     @PrimaryGeneratedColumn('increment')
     @Field(() => ID)
     id: number;
@@ -21,8 +25,6 @@ export class SeedEntity {
 
     @Column()
     publicKey: string;
-
-    // games
 
     @OneToMany(() => RouletteRollEntity, (roll) => roll.seed)
     @HideField()

@@ -13,6 +13,7 @@ import { PubSubService } from 'infrastructure/pub-sub/pub-sub.service';
 import { PlaceBetInput } from './dto/place-bet.input';
 import { RouletteBetEntity } from './entities/roulette-bet.entity';
 import { RouletteRollEntity } from './entities/roulette-roll.entity';
+import { RouletteSeedEntity } from './entities/roulette-seed.entity';
 import { RouletteStatsEntity } from './entities/roulette-stats.entity';
 import { RouletteService } from './services/roulette.service';
 
@@ -55,5 +56,11 @@ export class RouletteResolver {
         @Args('page', { defaultValue: {} }) page: PageInput,
     ): Promise<RouletteRollEntity[]> {
         return this.rouletteService.roulleteHistory(page);
+    }
+
+    @Query(() => [RouletteSeedEntity])
+    @DisableAuth()
+    seedsHistory(@Args('page') page: PageInput): Promise<RouletteSeedEntity[]> {
+        return this.rouletteService.seedsHistory(page);
     }
 }
