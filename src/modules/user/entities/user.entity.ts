@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
 import { RouletteBetEntity } from 'modules/games/roulette/entities/roulette-bet.entity';
 import {
     Check,
@@ -34,5 +34,6 @@ export class UserEntity {
     // bets history
 
     @OneToMany(() => RouletteBetEntity, (bet) => bet.user)
+    @HideField()
     rouletteBets: RouletteBetEntity[];
 }

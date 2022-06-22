@@ -1,4 +1,5 @@
 import {
+    DataSource,
     EntitySubscriberInterface,
     EventSubscriber,
     InsertEvent,
@@ -11,6 +12,10 @@ import { RouletteStatsEntity } from '../entities/roulette-stats.entity';
 export class RollSubscriber
     implements EntitySubscriberInterface<RouletteRollEntity>
 {
+    constructor(dataSource: DataSource) {
+        dataSource.subscribers.push(this);
+    }
+
     listenTo() {
         return RouletteRollEntity;
     }

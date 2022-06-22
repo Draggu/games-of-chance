@@ -41,12 +41,12 @@ export class RouletteGameStartScheduler implements OnModuleInit {
                 ]);
 
                 const nextId = lastRoll ? lastRoll.id + 1 : 1;
-                const { roll } = this.gameRandomizerService.result(
-                    lastSeed.privateKey,
-                    lastSeed.publicKey,
-                    15,
-                    nextId,
-                );
+                const { roll } = this.gameRandomizerService.result({
+                    privateKey: lastSeed.privateKey,
+                    publicKey: lastSeed.publicKey,
+                    range: 15,
+                    nonce: nextId,
+                });
 
                 await this.dataSource.transaction(async (manager) => {
                     await manager.insert(RouletteRollEntity, {

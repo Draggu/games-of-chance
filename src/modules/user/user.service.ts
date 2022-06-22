@@ -65,7 +65,7 @@ export class UserService {
         return this.updateBalance(currentUser, amount, '-');
     }
 
-    private updateBalance(
+    updateBalance(
         currentUser: CurrentUser,
         amount: number,
         sign: '+' | '-',
@@ -79,7 +79,7 @@ export class UserService {
             })
             .returning('balance')
             .execute()
-            .then((result) => result.raw[0]);
+            .then((result) => result.raw[0].balance);
     }
 
     updateBalanceParamLessQuery(

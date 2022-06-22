@@ -12,6 +12,34 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type DiceRollEntity {
+  amount: Int!
+  chances: Int!
+  nonce: Int!
+  side: DiceRollSide!
+  timestamp: DateTime!
+  winning: Int!
+  won: Boolean!
+}
+
+input DiceRollInput {
+  amount: Int!
+  chances: Int!
+  side: DiceRollSide = LOWER
+}
+
+enum DiceRollSide {
+  LOWER
+  UPPER
+}
+
+type DiceSeedEntity {
+  clientSeed: String!
+  nextServerSeed: String!
+  previousServerSeed: String
+  serverSeed: String!
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -22,6 +50,8 @@ type Mutation {
   login(login: LoginInput!): AuthPayload!
   placeBet(bet: PlaceBetInput!): RouletteBetEntity!
   register(register: RegisterInput!): AuthPayload!
+  rollDice(createDiceInput: DiceRollInput!): DiceRollEntity!
+  updateDiceSeed(newSeed: String!): DiceSeedEntity!
   updateUser(updateUser: UpdateUserInput!): UserEntity!
   withdraw(amount: Int!): Int!
 }
@@ -37,6 +67,7 @@ input PlaceBetInput {
 }
 
 type Query {
+  diceHistory(page: PageInput!): [DiceRollEntity!]!
   findUser(id: ID): UserEntity!
   rouletteHistory(page: PageInput = {}): [RouletteRollEntity!]!
   rouletteStats: RouletteStatsEntity!
@@ -94,9 +125,9 @@ input UpdateUserInput {
 
 type UserEntity {
   balance: Int!
+  diceSeed: DiceSeedEntity!
   email: String!
   id: ID!
   name: String!
   password: String!
-  rouletteBets: [RouletteBetEntity!]!
 }

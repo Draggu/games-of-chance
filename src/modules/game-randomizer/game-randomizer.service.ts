@@ -6,12 +6,17 @@ export class GameRandomizerService {
         return randomBytes(32).toString('hex');
     }
 
-    result(
-        privateKey: string,
-        publicKey: string,
-        n: number,
-        nonce: string | number,
-    ): { key: string; roll: number } {
+    result({
+        privateKey,
+        publicKey,
+        range,
+        nonce,
+    }: {
+        privateKey: string;
+        publicKey: string;
+        range: number;
+        nonce: string | number;
+    }): { key: string; roll: number } {
         const seed = [privateKey, publicKey, nonce].join('-');
 
         const subHash = createHmac('sha256', seed)
@@ -19,7 +24,7 @@ export class GameRandomizerService {
             .substring(0, 8);
 
         const spinNumber = parseInt(subHash, 16);
-        const roll = Math.abs(spinNumber) % n;
+        const roll = Math.abs(spinNumber) % range;
 
         return {
             key: subHash,

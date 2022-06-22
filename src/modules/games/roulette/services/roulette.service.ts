@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PageInput } from 'common/dto/page';
 import { CurrentUser } from 'decorators/current-user.decorator';
 import { sha256 } from 'helpers/sha256';
+import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
 import { RouletteSeedEntity } from 'modules/games/roulette/entities/roulette-seed.entity';
 import { Repository } from 'typeorm';
 import { PlaceBetInput } from '../dto/place-bet.input';
@@ -21,12 +22,20 @@ export class RouletteService implements OnModuleInit {
         @InjectRepository(RouletteBetEntity)
         private readonly rouletteBetRepository: Repository<RouletteBetEntity>,
         @InjectRepository(RouletteSeedEntity)
-        private readonly seedRepository: Repository<RouletteSeedEntity>,
+        private readonly rouletteSeedRepository: Repository<RouletteSeedEntity>,
+        private readonly gameRandomizerService: GameRandomizerService,
         private readonly rouletteTimesService: RouletteTimesService,
     ) {}
 
     async onModuleInit() {
-        await this.rouletteStatsRepository.insert({}).catch(() => {});
+        await Promise.allSettled([
+            this.rouletteStatsRepository.insert({}),
+            this.rouletteSeedRepository.insert({
+                id: 1,
+                privateKey: this.gameRandomizerService.generateKey(),
+                publicKey: this.gameRandomizerService.generateKey(),
+            }),
+        ]);
     }
 
     async placeBet(
@@ -71,7 +80,7 @@ export class RouletteService implements OnModuleInit {
     }
 
     async seedsHistory({ take, skip }: PageInput) {
-        const seeds = await this.seedRepository.find({
+        const seeds = await this.rouletteSeedRepository.find({
             take,
             skip: take * skip,
         });
