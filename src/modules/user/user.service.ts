@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as assert from 'assert';
+import { compare } from 'bcrypt';
 import { CurrentUser } from 'decorators/current-user.decorator';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
@@ -11,16 +13,23 @@ export class UserService {
         private readonly userRepository: Repository<UserEntity>,
     ) {}
 
-    findByCredentials({
+    async findByCredentials({
         password,
         email,
     }: {
         password: string;
         email: string;
     }) {
-        return this.userRepository.findOneOrFail({
-            where: { password, email },
-        });
+        const { password: hashedPassword, ...user } = await this.userRepository
+            .createQueryBuilder('user')
+            .select()
+            .addSelect('user.password')
+            .where({ email })
+            .getOneOrFail();
+
+        assert(compare(password, hashedPassword));
+
+        return this.userRepository.create(user);
     }
 
     findById(id: string) {

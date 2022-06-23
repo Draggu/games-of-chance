@@ -3,16 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PageInput } from 'common/dto/page';
 import { CurrentUser } from 'decorators/current-user.decorator';
 import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
-import { UserEntity } from 'modules/user/entities/user.entity';
 import { UserService } from 'modules/user/user.service';
 import { Repository } from 'typeorm';
-import { DiceRollSide, unreachableChances } from './consts';
-import { DiceRollInput } from './dto/dice-roll.input';
-import { DiceRollEntity } from './entities/dice-roll.entity';
-import { DiceSeedEntity } from './entities/dice-seed.entity';
+import { DiceRollSide, unreachableChances } from '../consts';
+import { DiceRollInput } from '../dto/dice-roll.input';
+import { DiceRollEntity } from '../entities/dice-roll.entity';
+import { DiceSeedEntity } from '../entities/dice-seed.entity';
 
 @Injectable()
-export class DiceService {
+export class DiceRollService {
     constructor(
         @InjectRepository(DiceSeedEntity)
         private readonly diceSeedRepository: Repository<DiceSeedEntity>,
@@ -62,14 +61,16 @@ export class DiceService {
             });
 
             const won =
-                side === DiceRollSide.LOWER ? chances > roll : chances <= roll;
+                side === DiceRollSide.LOWER
+                    ? chances > roll
+                    : unreachableChances - chances <= roll;
 
             if (won) {
                 const betMultiplier = (unreachableChances / chances) * 0.95;
 
                 await this.userService.updateBalance(
                     currentUser,
-                    amount * betMultiplier,
+                    Math.floor(amount * betMultiplier),
                     '+',
                     manager,
                 );
@@ -88,39 +89,17 @@ export class DiceService {
         });
     }
 
-    getSeed(user: UserEntity) {
-        return this.diceSeedRepository.findOneOrFail({
-            where: {
-                user,
-            },
-        });
-    }
-
-    updateSeed(currentUser: CurrentUser, clientSeed: string) {
-        const nextServerSeed = this.gameRandomizerService.generateKey();
-
-        return this.diceSeedRepository
-            .createQueryBuilder()
-            .update()
-            .set({
-                previousServerSeed: () => 'serverSeed',
-                serverSeed: () => 'nextServerSeed',
-                nextServerSeed,
-                clientSeed,
-            })
-            .where('userId = :userId', {
-                userId: currentUser.id,
-            })
-            .returning('*')
-            .execute()
-            .then(({ generatedMaps }) => generatedMaps[0] as DiceSeedEntity);
-    }
-
-    rollHistory(currentUser: CurrentUser, { skip, take }: PageInput) {
+    rollHistory(
+        currentUser: CurrentUser,
+        { skip, take }: PageInput,
+        onlyOwn: boolean,
+    ) {
         return this.diceRollRepository.find({
-            where: {
-                user: currentUser,
-            },
+            where: onlyOwn
+                ? {
+                      user: currentUser,
+                  }
+                : undefined,
             take,
             skip: skip * take,
         });

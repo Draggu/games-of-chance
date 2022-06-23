@@ -1,18 +1,16 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsNumber, Max } from 'class-validator';
+import { Directive, Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class PageInput {
-    @IsNumber()
-    @Max(20)
     @Field(() => Int, {
         defaultValue: 10,
     })
+    @Directive(/* GraphQL */ `@constraint(exclusiveMin:0, max:20)`)
     take: number = 10;
 
-    @IsNumber()
     @Field(() => Int, {
         defaultValue: 0,
     })
+    @Directive(/* GraphQL */ `@constraint(min:0)`)
     skip: number = 0;
 }

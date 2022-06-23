@@ -52,7 +52,7 @@ export class RouletteResolver {
     }
 
     @Query(() => [RouletteRollEntity])
-    rouletteHistory(
+    rouletteRollHistory(
         @Args('page', { defaultValue: {} }) page: PageInput,
     ): Promise<RouletteRollEntity[]> {
         return this.rouletteService.roulleteHistory(page);
@@ -60,7 +60,9 @@ export class RouletteResolver {
 
     @Query(() => [RouletteSeedEntity])
     @DisableAuth()
-    seedsHistory(@Args('page') page: PageInput): Promise<RouletteSeedEntity[]> {
+    rouletteSeedsHistory(
+        @Args('page') page: PageInput,
+    ): Promise<RouletteSeedEntity[]> {
         return this.rouletteService.seedsHistory(page);
     }
 }

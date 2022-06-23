@@ -11,4 +11,4 @@ registerEnumType(DiceRollSide, {
 
 export const DiceRollSideDbName = 'DiceRollSide';
 
-export const unreachableChances = 100;
+export const unreachableChances = 100_000;

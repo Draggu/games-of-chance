@@ -1,4 +1,5 @@
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
+import { randomKeyLength } from 'modules/game-randomizer/consts';
 import { RouletteRollEntity } from 'modules/games/roulette/entities/roulette-roll.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -20,10 +21,14 @@ export class RouletteSeedEntity {
     })
     day: string;
 
-    @Column()
+    @Column({
+        length: randomKeyLength,
+    })
     privateKey: string;
 
-    @Column()
+    @Column({
+        length: randomKeyLength,
+    })
     publicKey: string;
 
     @OneToMany(() => RouletteRollEntity, (roll) => roll.seed)

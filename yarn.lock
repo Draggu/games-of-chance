@@ -613,6 +613,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/merge@npm:8.2.15":
+  version: 8.2.15
+  resolution: "@graphql-tools/merge@npm:8.2.15"
+  dependencies:
+    "@graphql-tools/utils": 8.7.0
+    tslib: ^2.4.0
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 028f2c00d53b91323afdbf7cefa34facbc568428431cfd89b9120dfe952d4b63c812deee2f947f3cd5e084bf5929081caabc164d2123a6ec385c600469b9ed2f
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/mock@npm:^8.1.2":
   version: 8.6.12
   resolution: "@graphql-tools/mock@npm:8.6.12"
@@ -655,6 +667,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/schema@npm:^8.3.2":
+  version: 8.4.0
+  resolution: "@graphql-tools/schema@npm:8.4.0"
+  dependencies:
+    "@graphql-tools/merge": 8.2.15
+    "@graphql-tools/utils": 8.7.0
+    tslib: ^2.4.0
+    value-or-promise: 1.0.11
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 96071685d4e5fde4fbb20e514a4881063377a7f38b786532024d938d3cb0352881fb5bb30dbdfce2617821f00dcdddb9a265808ee7ee98ae7b491127edc09775
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/utils@npm:8.6.12":
   version: 8.6.12
   resolution: "@graphql-tools/utils@npm:8.6.12"
@@ -674,6 +700,17 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: ff95efe476d145c66936ab3fee33cc425f111dac35129bea828b12ada965344ab746d6a746f4ebaa261e3d957922381e49fcc061bd480a44f8f6252ac3b59e48
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/utils@npm:8.7.0, @graphql-tools/utils@npm:^8.6.2":
+  version: 8.7.0
+  resolution: "@graphql-tools/utils@npm:8.7.0"
+  dependencies:
+    tslib: ^2.4.0
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 52d61469306e2279d4ff24f7e3b1adc11a9e97a7b06d2b6830af9a0cf13ca8e19a5e2f68736892bf3e7de4a08a2e96a2639608e81ba0838d11ec1893ff7f7902
   languageName: node
   linkType: hard
 
@@ -4396,6 +4433,7 @@ __metadata:
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^4.0.0
     graphql: ^16.5.0
+    graphql-constraint-directive: ^3.1.1
     graphql-redis-subscriptions: ^2.4.2
     graphql-ws: ^5.9.0
     ioredis: ^5.0.6
@@ -4585,6 +4623,19 @@ __metadata:
   version: 4.2.10
   resolution: "graceful-fs@npm:4.2.10"
   checksum: 3f109d70ae123951905d85032ebeae3c2a5a7a997430df00ea30df0e3a6c60cf6689b109654d6fdacd28810a053348c4d14642da1d075049e6be1ba5216218da
+  languageName: node
+  linkType: hard
+
+"graphql-constraint-directive@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "graphql-constraint-directive@npm:3.1.1"
+  dependencies:
+    "@graphql-tools/schema": ^8.3.2
+    "@graphql-tools/utils": ^8.6.2
+    validator: ^13.6.0
+  peerDependencies:
+    graphql: ">=14.0.0"
+  checksum: 683eca9acd19341409274582367badea2c21eedf7ca16c0965252e6dbfed3c6e322ebcf0b44e65e25ef01e7a94aac7be0f73d74d307762bb863a80206566084a
   languageName: node
   linkType: hard
 
@@ -8478,7 +8529,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"validator@npm:^13.7.0":
+"validator@npm:^13.6.0, validator@npm:^13.7.0":
   version: 13.7.0
   resolution: "validator@npm:13.7.0"
   checksum: 2b83283de1222ca549a7ef57f46e8d49c6669213348db78b7045bce36a3b5843ff1e9f709ebf74574e06223461ee1f264f8cc9a26a0060a79a27de079d8286ef

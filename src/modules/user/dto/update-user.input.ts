@@ -1,12 +1,10 @@
-import { InputType } from '@nestjs/graphql';
-import { IsEmail, ValidateIf } from 'class-validator';
+import { Directive, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateUserInput {
     name?: string;
 
-    @ValidateIf((o: UpdateUserInput) => typeof o.email === 'string')
-    @IsEmail()
+    @Directive(/* GraphQL */ `@constraint(format:"email")`)
     email?: string;
 
     password?: string;

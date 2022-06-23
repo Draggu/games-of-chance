@@ -1,16 +1,23 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module, ValidationPipe } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { cors } from 'common/cors';
+import { lexicographicSortSchema } from 'graphql';
+import {
+    constraintDirective,
+    constraintDirectiveTypeDefs,
+} from 'graphql-constraint-directive';
 import { AuthGuard } from 'guards/auth.guard';
+import { printSchemaToFile } from 'helpers/schema/print';
+import { transformSchema } from 'helpers/schema/transform';
 import { AlwaysAgreePaymentsModule } from 'modules/always-agree-payments/always-agree-payments.module';
 import { AuthModule } from 'modules/auth/auth.module';
+import { GamesModule } from 'modules/games/games.module';
 import { UserModule } from 'modules/user/user.module';
 import { join } from 'path';
-import { GamesModule } from './modules/games/games.module';
 @Module({
     imports: [
         AlwaysAgreePaymentsModule,
@@ -25,11 +32,17 @@ import { GamesModule } from './modules/games/games.module';
                 cors,
                 debug: config.get('NODE_ENV') !== 'production',
                 playground: false,
-                sortSchema: true,
-                autoSchemaFile: 'schema.gql',
                 subscriptions: {
                     'graphql-ws': true,
                 },
+                autoSchemaFile: true,
+                transformAutoSchemaFile: true,
+                transformSchema: transformSchema({
+                    beforePrint: [lexicographicSortSchema],
+                    afterPrint: [constraintDirective()],
+                    typeDefs: [constraintDirectiveTypeDefs],
+                    print: printSchemaToFile('schema.gql'),
+                }),
                 fieldResolverEnhancers: ['filters'],
                 context: ({ req }) => ({ req }),
             }),
@@ -53,10 +66,6 @@ import { GamesModule } from './modules/games/games.module';
         }),
     ],
     providers: [
-        {
-            provide: APP_PIPE,
-            useValue: new ValidationPipe({ whitelist: true, transform: true }),
-        },
         {
             provide: APP_GUARD,
             useClass: AuthGuard,

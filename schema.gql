@@ -2,6 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+directive @constraint(contains: String, endsWith: String, exclusiveMax: Float, exclusiveMin: Float, format: String, max: Float, maxLength: Int, min: Float, minLength: Int, multipleOf: Float, notContains: String, pattern: String, startsWith: String, uniqueTypeName: String) on ARGUMENT_DEFINITION | FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
 type AuthPayload {
   token: String!
   user: UserEntity!
@@ -23,8 +31,8 @@ type DiceRollEntity {
 }
 
 input DiceRollInput {
-  amount: Int!
-  chances: Int!
+  amount: Int! @constraint(min: 1)
+  chances: Int! @constraint(min: 1, exclusiveMax: 100000)
   side: DiceRollSide = LOWER
 }
 
@@ -41,7 +49,7 @@ type DiceSeedEntity {
 }
 
 input LoginInput {
-  email: String!
+  email: String! @constraint(format: "email")
   password: String!
 }
 
@@ -57,25 +65,25 @@ type Mutation {
 }
 
 input PageInput {
-  skip: Int = 0
-  take: Int = 10
+  skip: Int = 0 @constraint(min: 0)
+  take: Int = 10 @constraint(exclusiveMin: 0, max: 20)
 }
 
 input PlaceBetInput {
-  amount: Int!
+  amount: Int! @constraint(exclusiveMin: 0)
   color: RouletteBetColor!
 }
 
 type Query {
-  diceHistory(page: PageInput!): [DiceRollEntity!]!
+  diceRollHistory(onlyOwn: Boolean = false, page: PageInput!): [DiceRollEntity!]!
   findUser(id: ID): UserEntity!
-  rouletteHistory(page: PageInput = {}): [RouletteRollEntity!]!
+  rouletteRollHistory(page: PageInput = {skip: 0, take: 10}): [RouletteRollEntity!]!
+  rouletteSeedsHistory(page: PageInput!): [RouletteSeedEntity!]!
   rouletteStats: RouletteStatsEntity!
-  seedsHistory(page: PageInput!): [RouletteSeedEntity!]!
 }
 
 input RegisterInput {
-  email: String!
+  email: String! @constraint(format: "email")
   name: String!
   password: String!
 }
@@ -118,7 +126,7 @@ type Subscription {
 }
 
 input UpdateUserInput {
-  email: String
+  email: String @constraint(format: "email")
   name: String
   password: String
 }
