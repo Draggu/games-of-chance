@@ -1,12 +1,12 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageInput } from 'common/dto/page';
-import { CurrentUser } from 'decorators/current-user.decorator';
+import { CurrentUser } from 'directives/auth/current-user.decorator';
 import { sha256 } from 'helpers/sha256';
 import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
 import { RouletteSeedEntity } from 'modules/games/roulette/entities/roulette-seed.entity';
 import { Repository } from 'typeorm';
-import { PlaceBetInput } from '../dto/place-bet.input';
+import { PlaceRouletteBetInput } from '../dto/place-bet.input';
 import { RouletteBetEntity } from '../entities/roulette-bet.entity';
 import { RouletteRollEntity } from '../entities/roulette-roll.entity';
 import { RouletteStatsEntity } from '../entities/roulette-stats.entity';
@@ -40,7 +40,7 @@ export class RouletteService implements OnModuleInit {
 
     async placeBet(
         currentUser: CurrentUser,
-        { amount, color }: PlaceBetInput,
+        { amount, color }: PlaceRouletteBetInput,
     ): Promise<RouletteBetEntity> {
         const timestamp = this.rouletteTimesService.nowBackedOfBetTime();
 
@@ -91,6 +91,7 @@ export class RouletteService implements OnModuleInit {
             const safeTodaySeed = {
                 ...todaySeed,
                 privateKey: sha256(todaySeed.privateKey),
+                isHashed: true,
             };
 
             return [safeTodaySeed, ...otherSeeds];

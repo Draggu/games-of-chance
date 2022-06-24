@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CurrentUser } from 'decorators/current-user.decorator';
+import { CurrentUser } from 'directives/auth/current-user.decorator';
 import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
 import { UserEntity } from 'modules/user/entities/user.entity';
 import { Repository } from 'typeorm';

@@ -667,7 +667,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/schema@npm:^8.3.2":
+"@graphql-tools/schema@npm:^8.3.2, @graphql-tools/schema@npm:^8.4.0":
   version: 8.4.0
   resolution: "@graphql-tools/schema@npm:8.4.0"
   dependencies:
@@ -703,7 +703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:8.7.0, @graphql-tools/utils@npm:^8.6.2":
+"@graphql-tools/utils@npm:8.7.0, @graphql-tools/utils@npm:^8.6.2, @graphql-tools/utils@npm:^8.7.0":
   version: 8.7.0
   resolution: "@graphql-tools/utils@npm:8.7.0"
   dependencies:
@@ -4398,6 +4398,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "games-of-chance@workspace:."
   dependencies:
+    "@graphql-tools/schema": ^8.4.0
+    "@graphql-tools/utils": ^8.7.0
     "@nestjs/apollo": ^10.0.14
     "@nestjs/cli": ^8.2.6
     "@nestjs/common": ^8.4.7
@@ -4438,6 +4440,7 @@ __metadata:
     graphql-ws: ^5.9.0
     ioredis: ^5.0.6
     jest: ^27.2.5
+    json-to-graphql-query: ^2.2.4
     pg: ^8.7.3
     prettier: ^2.3.2
     prettier-plugin-organize-imports: ^2.3.4
@@ -5801,6 +5804,13 @@ __metadata:
   version: 1.0.1
   resolution: "json-stable-stringify-without-jsonify@npm:1.0.1"
   checksum: cff44156ddce9c67c44386ad5cddf91925fe06b1d217f2da9c4910d01f358c6e3989c4d5a02683c7a5667f9727ff05831f7aa8ae66c8ff691c556f0884d49215
+  languageName: node
+  linkType: hard
+
+"json-to-graphql-query@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "json-to-graphql-query@npm:2.2.4"
+  checksum: 3caced3bfc59c4aa26632f8a96fa8cc356dd4b82a6cc9c64a16d2eb262d8ac539ed584ca51552a9cde24beb2735f15feaf611619e10182098bdb33d63b2bf5df
   languageName: node
   linkType: hard
 

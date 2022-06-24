@@ -1,8 +1,8 @@
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CurrentUser } from 'decorators/current-user.decorator';
+import { Auth, CurrentUser } from 'directives/auth/current-user.decorator';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UserEntity } from './entities/user.entity';
-import { UserService } from './user.service';
+import { UserService } from './services/user.service';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
@@ -10,7 +10,7 @@ export class UserResolver {
 
     @Query(() => UserEntity)
     findUser(
-        @CurrentUser() currentUser: CurrentUser,
+        @Auth() currentUser: CurrentUser,
         @Args('id', { type: () => ID, nullable: true }) id?: string | null,
     ): Promise<UserEntity> {
         return this.userService.findById(id || currentUser.id);
@@ -18,7 +18,7 @@ export class UserResolver {
 
     @Mutation(() => UserEntity)
     updateUser(
-        @CurrentUser() currentUser: CurrentUser,
+        @Auth() currentUser: CurrentUser,
         @Args('updateUser') updateUserInput: UpdateUserInput,
     ): Promise<UserEntity> {
         return this.userService.update(currentUser, updateUserInput);

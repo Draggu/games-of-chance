@@ -5,7 +5,7 @@ import {
     ResolveField,
     Resolver,
 } from '@nestjs/graphql';
-import { CurrentUser } from 'decorators/current-user.decorator';
+import { Auth, CurrentUser } from 'directives/auth/current-user.decorator';
 import { UserEntity } from 'modules/user/entities/user.entity';
 import { DiceSeedEntity } from '../entities/dice-seed.entity';
 import { DiceSeedService } from '../services/dice-seed.service';
@@ -18,7 +18,7 @@ export class DiceSeedResolver {
 
     @Mutation(() => DiceSeedEntity)
     updateDiceSeed(
-        @CurrentUser() currentUser: CurrentUser,
+        @Auth() currentUser: CurrentUser,
         @Args('newSeed') newSeed: string,
     ): Promise<DiceSeedEntity> {
         return this.diceSeedService.updateSeed(currentUser, newSeed);

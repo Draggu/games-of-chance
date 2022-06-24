@@ -21,6 +21,8 @@
         "test:e2e": "jest --config ./test/jest-e2e.json"
     },
     "dependencies": {
+        "@graphql-tools/schema": "^8.4.0",
+        "@graphql-tools/utils": "^8.7.0",
         "@nestjs/apollo": "^10.0.14",
         "@nestjs/common": "^8.4.7",
         "@nestjs/config": "^2.1.0",
@@ -40,6 +42,7 @@
         "graphql-redis-subscriptions": "^2.4.2",
         "graphql-ws": "^5.9.0",
         "ioredis": "^5.0.6",
+        "json-to-graphql-query": "^2.2.4",
         "pg": "^8.7.3",
         "redlock": "^5.0.0-beta.2",
         "reflect-metadata": "^0.1.13",

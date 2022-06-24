@@ -29,6 +29,7 @@ export class DiceSeedEntity {
     })
     @Field({
         middleware: [hashMiddleware],
+        name: 'hashedServerSeed',
     })
     serverSeed: string;
 
@@ -37,6 +38,7 @@ export class DiceSeedEntity {
     })
     @Field({
         middleware: [hashMiddleware],
+        name: 'hashedNextServerSeed',
     })
     nextServerSeed: string;
 

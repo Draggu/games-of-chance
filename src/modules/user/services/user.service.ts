@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as assert from 'assert';
 import { compare } from 'bcrypt';
-import { CurrentUser } from 'decorators/current-user.decorator';
+import { CurrentUser } from 'directives/auth/current-user.decorator';
 import { Repository } from 'typeorm';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from '../entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -64,43 +64,5 @@ export class UserService {
             password,
             name,
         });
-    }
-
-    deposit(currentUser: CurrentUser, amount: number) {
-        return this.updateBalance(currentUser, amount, '+');
-    }
-
-    withdraw(currentUser: CurrentUser, amount: number) {
-        return this.updateBalance(currentUser, amount, '-');
-    }
-
-    updateBalance(
-        currentUser: CurrentUser,
-        amount: number,
-        sign: '+' | '-',
-        manager = this.userRepository.manager,
-    ): Promise<number> {
-        return this.updateBalanceParamLessQuery(sign, ':amount', manager)
-            .where(`id = :userId`)
-            .setParameters({
-                userId: currentUser.id,
-                amount,
-            })
-            .returning('balance')
-            .execute()
-            .then((result) => result.raw[0].balance);
-    }
-
-    updateBalanceParamLessQuery(
-        sign: '+' | '-',
-        amount = ':amount',
-        manager = this.userRepository.manager,
-    ) {
-        return manager
-            .createQueryBuilder()
-            .update(UserEntity)
-            .set({
-                balance: () => `balance ${sign} ${amount}`,
-            });
     }
 }

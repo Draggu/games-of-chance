@@ -21,7 +21,7 @@ export class RollSubscriber
     }
 
     afterInsert(event: InsertEvent<RouletteRollEntity>) {
-        const color: RouletteBetColor = event.metadata.propertiesMap.color;
+        const { color } = event.entity;
         const updateColumnName: keyof RouletteStatsEntity =
             color === RouletteBetColor.GREEN
                 ? 'greenCount'

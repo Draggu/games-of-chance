@@ -4,6 +4,7 @@ import { CronService } from 'infrastructure/cron/cron.service';
 import { PubSubService } from 'infrastructure/pub-sub/pub-sub.service';
 import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
 import { DataSource, Repository } from 'typeorm';
+import { RouletteBetColor } from '../consts';
 import { RouletteRollEntity } from '../entities/roulette-roll.entity';
 import { RouletteSeedEntity } from '../entities/roulette-seed.entity';
 import { RouletteTimesService } from '../services/roulette-times.service';
@@ -47,6 +48,12 @@ export class RouletteGameStartScheduler implements OnModuleInit {
                     range: 15,
                     nonce: nextId,
                 });
+                const color =
+                    roll === 14
+                        ? RouletteBetColor.GREEN
+                        : roll % 2 == 0
+                        ? RouletteBetColor.BLACK
+                        : RouletteBetColor.RED;
 
                 await this.dataSource.transaction(async (manager) => {
                     await manager.insert(RouletteRollEntity, {
@@ -56,6 +63,7 @@ export class RouletteGameStartScheduler implements OnModuleInit {
                             id: lastSeed.id,
                         },
                         winning: roll,
+                        color,
                     });
 
                     await done();

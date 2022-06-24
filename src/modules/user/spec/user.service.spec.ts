@@ -4,7 +4,7 @@ import { compare } from 'bcrypt';
 import { TestDbModule } from 'helpers/test/test-db.module';
 import { DataSource } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 describe('UserService', () => {
     let service: UserService;
@@ -39,48 +39,5 @@ describe('UserService', () => {
         expect(user).toEqual(expect.objectContaining(params));
 
         expect(await compare(password, user.password)).toBeTruthy();
-    });
-
-    const jeff = {
-        id: 'id-of-jeff',
-        name: 'jeff',
-        email: 'test@test.com',
-        balance: 1234,
-        password: 'asdjnnn',
-    };
-
-    const tom = {
-        name: 'tom',
-        id: 'id-of-tom',
-        email: 'test2@test.com',
-        password: 'tu89ioj',
-    };
-
-    it('should deposit specified amount', async () => {
-        await dataSource.getRepository(UserEntity).save([jeff, tom]);
-
-        const depositAmount = 50782;
-
-        const newBalance = await service.deposit(jeff, depositAmount);
-
-        expect(newBalance).toBe(jeff.balance + depositAmount);
-    });
-
-    it('should withdraw specified amount', async () => {
-        await dataSource.getRepository(UserEntity).save([jeff, tom]);
-
-        const withdrawAmount = 782;
-
-        const newBalance = await service.withdraw(jeff, withdrawAmount);
-
-        expect(newBalance).toBe(jeff.balance + withdrawAmount);
-    });
-
-    it('should fail on withdrawing more than current balance', async () => {
-        await dataSource.getRepository(UserEntity).save([jeff, tom]);
-
-        const withdrawAmount = jeff.balance + 1;
-
-        expect(() => service.withdraw(jeff, withdrawAmount)).toThrow();
     });
 });

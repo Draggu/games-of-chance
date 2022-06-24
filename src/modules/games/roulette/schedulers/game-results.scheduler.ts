@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CronService } from 'infrastructure/cron/cron.service';
 import { PubSubService } from 'infrastructure/pub-sub/pub-sub.service';
 import { UserEntity } from 'modules/user/entities/user.entity';
-import { UserService } from 'modules/user/user.service';
+import { UserBalanceService } from 'modules/user/services/user-balance.service';
 import { DataSource, Repository } from 'typeorm';
 import { RouletteBetColor, RouletteBetColorDbName } from '../consts';
 import { RouletteBetEntity } from '../entities/roulette-bet.entity';
@@ -17,7 +17,7 @@ export class RouletteGameResultsScheduler implements OnModuleInit {
         private readonly rouletteBetRepository: Repository<RouletteBetEntity>,
         private readonly rouletteTimesService: RouletteTimesService,
         private readonly rouletteService: RouletteService,
-        private readonly userService: UserService,
+        private readonly userBalanceService: UserBalanceService,
         private readonly cronService: CronService,
         private readonly pubSubService: PubSubService,
         private readonly dataSource: DataSource,
@@ -56,7 +56,7 @@ export class RouletteGameResultsScheduler implements OnModuleInit {
         const betTableName =
             this.dataSource.getMetadata(RouletteBetEntity).tableName;
 
-        const updateBalanceQuery = this.userService
+        const updateBalanceQuery = this.userBalanceService
             .updateBalanceParamLessQuery(
                 '+',
                 `(bets.amount * 

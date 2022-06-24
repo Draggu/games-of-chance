@@ -1,6 +1,8 @@
 import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
-import { CurrentUser } from 'decorators/current-user.decorator';
+import { Auth, CurrentUser } from 'directives/auth/current-user.decorator';
+import { BalanceDirective } from 'directives/balance/balance-directive.decorator';
 import { AlwaysAgreePaymentsService } from './always-agree-payments.service';
+import { BalanceEntity } from './entites/balance.entity';
 
 @Resolver()
 export class AlwaysAgreePaymentsResolver {
@@ -8,19 +10,20 @@ export class AlwaysAgreePaymentsResolver {
         private readonly alwaysAgreePaymentsService: AlwaysAgreePaymentsService,
     ) {}
 
-    @Mutation(() => Int)
+    @Mutation(() => BalanceEntity)
     deposit(
-        @CurrentUser() currentUser: CurrentUser,
+        @Auth() currentUser: CurrentUser,
         @Args('amount', { type: () => Int }) amount: number,
-    ): Promise<number> {
+    ): Promise<BalanceEntity> {
         return this.alwaysAgreePaymentsService.deposit(currentUser, amount);
     }
 
-    @Mutation(() => Int)
+    @Mutation(() => BalanceEntity)
+    @BalanceDirective()
     withdraw(
-        @CurrentUser() currentUser: CurrentUser,
+        @Auth() currentUser: CurrentUser,
         @Args('amount', { type: () => Int }) amount: number,
-    ): Promise<number> {
+    ): Promise<BalanceEntity> {
         return this.alwaysAgreePaymentsService.withdraw(currentUser, amount);
     }
 }

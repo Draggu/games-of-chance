@@ -27,15 +27,11 @@ export class DiceRollEntity {
     })
     side: DiceRollSide;
 
-    @Column({
-        type: 'smallint',
-    })
+    @Column()
     @Field(() => Int)
     chances: number;
 
-    @Column({
-        type: 'smallint',
-    })
+    @Column()
     @Field(() => Int)
     winning: number;
 

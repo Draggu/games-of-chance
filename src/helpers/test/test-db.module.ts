@@ -1,5 +1,4 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import 'pg';
 
 export const TestDbModule = TypeOrmModule.forRoot({
     type: 'postgres',

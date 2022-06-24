@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageInput } from 'common/dto/page';
-import { CurrentUser } from 'decorators/current-user.decorator';
+import { CurrentUser } from 'directives/auth/current-user.decorator';
 import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
-import { UserService } from 'modules/user/user.service';
+import { UserBalanceService } from 'modules/user/services/user-balance.service';
 import { Repository } from 'typeorm';
 import { DiceRollSide, unreachableChances } from '../consts';
 import { DiceRollInput } from '../dto/dice-roll.input';
@@ -18,7 +18,7 @@ export class DiceRollService {
         @InjectRepository(DiceRollEntity)
         private readonly diceRollRepository: Repository<DiceRollEntity>,
         private readonly gameRandomizerService: GameRandomizerService,
-        private readonly userService: UserService,
+        private readonly userBalanceService: UserBalanceService,
     ) {}
 
     rollDice(
@@ -28,7 +28,7 @@ export class DiceRollService {
         return this.diceSeedRepository.manager.transaction(async (manager) => {
             // charge user account to lock cash for potential lose
             // also checks if user have enough to play
-            await this.userService.updateBalance(
+            await this.userBalanceService.updateBalance(
                 currentUser,
                 amount,
                 '-',
@@ -68,7 +68,7 @@ export class DiceRollService {
             if (won) {
                 const betMultiplier = (unreachableChances / chances) * 0.95;
 
-                await this.userService.updateBalance(
+                await this.userBalanceService.updateBalance(
                     currentUser,
                     Math.floor(amount * betMultiplier),
                     '+',
@@ -76,16 +76,25 @@ export class DiceRollService {
                 );
             }
 
-            return manager.save(DiceRollEntity, {
-                id: currentRollId,
-                user: currentUser,
-                winning: roll,
-                seed,
-                amount,
-                chances,
-                side,
-                won,
-            });
+            return manager
+                .createQueryBuilder()
+                .insert()
+                .into(DiceRollEntity)
+                .values([
+                    {
+                        id: currentRollId,
+                        user: currentUser,
+                        winning: roll,
+                        seed,
+                        amount,
+                        chances,
+                        side,
+                        won,
+                    },
+                ])
+                .returning('*')
+                .execute()
+                .then(({ raw }) => raw[0]);
         });
     }
 

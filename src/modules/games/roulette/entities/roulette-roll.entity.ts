@@ -35,17 +35,6 @@ export class RouletteRollEntity {
         type: 'enum',
         enum: RouletteBetColor,
         enumName: RouletteBetColorDbName,
-        asExpression: `(
-            CASE 
-                WHEN winning = 14 THEN
-                    '${RouletteBetColor.GREEN}'::"${RouletteBetColorDbName}"
-                WHEN winning % 2 = 0 THEN
-                    '${RouletteBetColor.BLACK}'::"${RouletteBetColorDbName}"
-                ELSE  '${RouletteBetColor.RED}'::"${RouletteBetColorDbName}"
-            END
-        )`,
-        generatedType: 'STORED',
-        generatedIdentity: 'ALWAYS',
     })
     color: RouletteBetColor;
 

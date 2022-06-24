@@ -8,11 +8,26 @@ schema {
   subscription: Subscription
 }
 
+directive @auth on FIELD_DEFINITION
+
+directive @balance on FIELD_DEFINITION
+
 directive @constraint(contains: String, endsWith: String, exclusiveMax: Float, exclusiveMin: Float, format: String, max: Float, maxLength: Int, min: Float, minLength: Int, multipleOf: Float, notContains: String, pattern: String, startsWith: String, uniqueTypeName: String) on ARGUMENT_DEFINITION | FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 type AuthPayload {
   token: String!
   user: UserEntity!
+}
+
+type BalanceEntity {
+  balance: Int!
+}
+
+union BalanceEntityOrBalanceTooLowError = BalanceEntity | BalanceTooLowError
+
+type BalanceTooLowError {
+  chargeAmount: Int!
+  currentBalance: Int!
 }
 
 """
@@ -30,6 +45,8 @@ type DiceRollEntity {
   won: Boolean!
 }
 
+union DiceRollEntityOrBalanceTooLowError = BalanceTooLowError | DiceRollEntity
+
 input DiceRollInput {
   amount: Int! @constraint(min: 1)
   chances: Int! @constraint(min: 1, exclusiveMax: 100000)
@@ -43,9 +60,9 @@ enum DiceRollSide {
 
 type DiceSeedEntity {
   clientSeed: String!
-  nextServerSeed: String!
+  hashedNextServerSeed: String!
+  hashedServerSeed: String!
   previousServerSeed: String
-  serverSeed: String!
 }
 
 input LoginInput {
@@ -54,14 +71,14 @@ input LoginInput {
 }
 
 type Mutation {
-  deposit(amount: Int!): Int!
+  deposit(amount: Int!): BalanceEntity! @auth
   login(login: LoginInput!): AuthPayload!
-  placeBet(bet: PlaceBetInput!): RouletteBetEntity!
+  placeRouletteBet(bet: PlaceRouletteBetInput!): RouletteBetEntityOrBalanceTooLowError @balance @auth
   register(register: RegisterInput!): AuthPayload!
-  rollDice(createDiceInput: DiceRollInput!): DiceRollEntity!
-  updateDiceSeed(newSeed: String!): DiceSeedEntity!
-  updateUser(updateUser: UpdateUserInput!): UserEntity!
-  withdraw(amount: Int!): Int!
+  rollDice(createDiceInput: DiceRollInput!): DiceRollEntityOrBalanceTooLowError @balance @auth
+  updateDiceSeed(newSeed: String!): DiceSeedEntity! @auth
+  updateUser(updateUser: UpdateUserInput!): UserEntity! @auth
+  withdraw(amount: Int!): BalanceEntityOrBalanceTooLowError @balance @auth
 }
 
 input PageInput {
@@ -69,14 +86,14 @@ input PageInput {
   take: Int = 10 @constraint(exclusiveMin: 0, max: 20)
 }
 
-input PlaceBetInput {
+input PlaceRouletteBetInput {
   amount: Int! @constraint(exclusiveMin: 0)
   color: RouletteBetColor!
 }
 
 type Query {
-  diceRollHistory(onlyOwn: Boolean = false, page: PageInput!): [DiceRollEntity!]!
-  findUser(id: ID): UserEntity!
+  diceRollHistory(onlyOwn: Boolean = false, page: PageInput!): [DiceRollEntity!]! @auth
+  findUser(id: ID): UserEntity! @auth
   rouletteRollHistory(page: PageInput = {skip: 0, take: 10}): [RouletteRollEntity!]!
   rouletteSeedsHistory(page: PageInput!): [RouletteSeedEntity!]!
   rouletteStats: RouletteStatsEntity!
@@ -100,6 +117,8 @@ type RouletteBetEntity {
   id: ID!
 }
 
+union RouletteBetEntityOrBalanceTooLowError = BalanceTooLowError | RouletteBetEntity
+
 type RouletteRollEntity {
   color: RouletteBetColor!
   nonce: Int!
@@ -110,6 +129,7 @@ type RouletteRollEntity {
 type RouletteSeedEntity {
   day: String!
   id: ID!
+  isHashed: Boolean!
   privateKey: String!
   publicKey: String!
 }

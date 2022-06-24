@@ -7,9 +7,10 @@ import {
     OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+import { BalanceNotNegativeConstraint } from '../consts';
 
 @Entity()
-@Check('"balance" >= 0')
+@Check(BalanceNotNegativeConstraint, '"balance" >= 0')
 @ObjectType()
 export class UserEntity {
     static readonly saltRound = 10;
