@@ -36,6 +36,7 @@ import { join } from 'path';
                 migrationsRun: true,
                 synchronize: config.get('NODE_ENV') !== 'production',
                 logging: config.get('NODE_ENV') !== 'production' && ['query'],
+                useUTC: true,
                 // dropSchema: true,
             }),
         }),

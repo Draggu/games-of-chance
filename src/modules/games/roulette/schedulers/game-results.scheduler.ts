@@ -12,6 +12,8 @@ import { RouletteService } from '../services/roulette.service';
 
 @Injectable()
 export class RouletteGameResultsScheduler implements OnModuleInit {
+    private readonly timePlaceholder = '$1';
+
     constructor(
         @InjectRepository(RouletteBetEntity)
         private readonly rouletteBetRepository: Repository<RouletteBetEntity>,
@@ -40,7 +42,7 @@ export class RouletteGameResultsScheduler implements OnModuleInit {
                 await this.dataSource.transaction(async (manager) => {
                     await manager.query(
                         updateWinnersBalancesQuery.replace(
-                            '$1',
+                            this.timePlaceholder,
                             this.rouletteTimesService.nowBackedOfIncreasedBetTime(),
                         ),
                     );
@@ -87,10 +89,10 @@ export class RouletteGameResultsScheduler implements OnModuleInit {
                 'roll.color as color',
             ])
             .innerJoin('bet.roll', 'roll')
-            .where(`timestamp <= $1`)
+            .where(`"createdAt" <= ${this.timePlaceholder}`)
             .andWhere('"isRewarded" = false')
             .andWhere('bet.color = roll.color')
-            .orderBy('timestamp', 'DESC')
+            .orderBy('"createdAt"', 'DESC')
             .setLock('pessimistic_partial_write')
             .getQuery();
 

@@ -19,6 +19,7 @@ export class RouletteSeedEntity {
         type: 'date',
         default: () => 'CURRENT_DATE',
     })
+    @Field(() => Date)
     day: string;
 
     @Column({
@@ -33,5 +34,5 @@ export class RouletteSeedEntity {
 
     @OneToMany(() => RouletteRollEntity, (roll) => roll.seed)
     @HideField()
-    rouletteRoll: RouletteRollEntity[];
+    rolls: RouletteRollEntity[];
 }

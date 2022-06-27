@@ -1,61 +1,78 @@
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
 import * as assert from 'assert';
-import {
-    GqlDirectiveFactory,
-    SchemaTransform,
-} from 'config/graphql.module.config';
-import {
-    AuthProperties,
-    CurrentUser,
-    CurrentUserKey,
-} from 'directives/auth/current-user.decorator';
+import { GqlDirectiveFactory } from 'config/graphql.module.config';
 import { Request } from 'express';
-import { GraphQLFieldConfig } from 'graphql';
-import { AuthService } from 'modules/auth/auth.service';
+import { SchemaTransform } from 'helpers/schema/transform';
+import { AuthService } from 'modules/auth/services/auth.service';
+import { currentUserSymbol, userPromiseSymbol } from './consts';
+import { onlyOwnNullableTypes, onlyOwnRule } from './rules/only-own.rule';
+import { optionalRule } from './rules/optional.rule';
+import { AuthProperties, CurrentUser, FieldConfig, Result } from './types';
 
 @Injectable()
 export class AuthDirective implements GqlDirectiveFactory {
     readonly typeDefs = /* GraphQL */ `
-        directive @auth on FIELD_DEFINITION
+        """
+        requires authorization
+
+        allowed forms:
+            - http headers
+                - Authorization: Bearer <token>
+        """
+        directive @auth(
+            optional: Boolean = false
+            onlyOwn: Boolean = false
+        ) on FIELD_DEFINITION
     `;
-    private readonly userPromiseSymbol = Symbol('user promise on req');
 
     constructor(private readonly authService: AuthService) {}
 
     create(): SchemaTransform {
         return (schema) =>
             mapSchema(schema, {
-                [MapperKind.FIELD]: (
-                    fieldConfig: GraphQLFieldConfig<
-                        unknown,
-                        { req: Request },
-                        unknown
-                    >,
-                ) => {
-                    const directiveArgs: AuthProperties | undefined =
-                        getDirective(schema, fieldConfig, 'auth')?.[0];
+                [MapperKind.FIELD]: (fieldConfig: FieldConfig) => {
+                    const directiveArgs = getDirective(
+                        schema,
+                        fieldConfig,
+                        'auth',
+                    )?.[0] as AuthProperties | undefined;
 
                     if (directiveArgs) {
+                        if (directiveArgs.onlyOwn) {
+                            onlyOwnNullableTypes(fieldConfig);
+                        }
+
                         const { resolve } = fieldConfig;
+
                         fieldConfig.resolve = async (
-                            source,
+                            parent,
                             args,
                             context,
                             info,
                         ) => {
                             // prevents retrieving user more than once
                             // can be called concurently
-                            context.req[this.userPromiseSymbol] ||=
+                            context.req[userPromiseSymbol] ||=
                                 this.setUserFromToken(context.req);
 
-                            const user: CurrentUser = await context.req[
-                                this.userPromiseSymbol
-                            ];
+                            const user: CurrentUser | undefined = await context
+                                .req[userPromiseSymbol];
 
-                            return this.validatePermission(directiveArgs, user)
-                                ? resolve?.(source, args, context, info)
-                                : null;
+                            const result = (await resolve?.(
+                                parent,
+                                args,
+                                context,
+                                info,
+                            )) as Result;
+
+                            return [
+                                optionalRule(user),
+                                onlyOwnRule(parent, info, user),
+                            ].reduce(
+                                (result, rule) => rule(result, directiveArgs),
+                                result,
+                            );
                         };
                     }
 
@@ -64,28 +81,19 @@ export class AuthDirective implements GqlDirectiveFactory {
             });
     }
 
-    private validatePermission(
-        authProperties: AuthProperties,
-        currentUser: CurrentUser,
-    ): boolean {
-        //TODO
-        return !!currentUser;
-    }
-
-    private setUserFromToken(req: Request) {
-        const token = this.tokenFromRequest(req);
+    private async setUserFromToken(
+        req: Request,
+    ): Promise<CurrentUser | undefined> {
+        const token = req.header('Authorization')?.replace('Bearer ', '');
 
         assert(token);
 
-        return this.setUserOnContext(req, token);
-    }
+        const maybeUser = await this.authService.fromToken(token);
 
-    private tokenFromRequest = (req: Request) =>
-        req.header('Authorization')?.replace('Bearer ', '');
+        if (maybeUser) {
+            req[currentUserSymbol] = { id: maybeUser.id };
+        }
 
-    private async setUserOnContext(req: Request, token: string) {
-        const { id } = await this.authService.fromToken(token);
-
-        return (req[CurrentUserKey] = { id });
+        return req[currentUserSymbol];
     }
 }

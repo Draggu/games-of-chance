@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CurrentUser } from 'directives/auth/current-user.decorator';
+import { CurrentUser } from 'directives/auth/types';
 import { UserBalanceService } from 'modules/user/services/user-balance.service';
 
 @Injectable()

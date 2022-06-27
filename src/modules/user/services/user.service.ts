@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as assert from 'assert';
 import { compare } from 'bcrypt';
-import { CurrentUser } from 'directives/auth/current-user.decorator';
+import { CurrentUser } from 'directives/auth/types';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
 

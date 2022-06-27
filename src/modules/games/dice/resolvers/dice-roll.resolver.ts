@@ -1,6 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PageInput } from 'common/dto/page';
-import { Auth, CurrentUser } from 'directives/auth/current-user.decorator';
+import { Auth } from 'directives/auth/decorators/current-user.decorator';
+import { CurrentUser } from 'directives/auth/types';
 import { BalanceDirective } from 'directives/balance/balance-directive.decorator';
 import { DiceRollInput } from '../dto/dice-roll.input';
 import { DiceRollEntity } from '../entities/dice-roll.entity';
@@ -20,14 +21,7 @@ export class DiceRollResolver {
     }
 
     @Query(() => [DiceRollEntity])
-    diceRollHistory(
-        @Auth() currentUser: CurrentUser,
-        @Args('page') page: PageInput,
-        @Args('onlyOwn', {
-            defaultValue: false,
-        })
-        onlyOwn: boolean,
-    ): Promise<DiceRollEntity[]> {
-        return this.diceService.rollHistory(currentUser, page, onlyOwn);
+    diceRollHistory(@Args('page') page: PageInput): Promise<DiceRollEntity[]> {
+        return this.diceService.rollHistory(page);
     }
 }

@@ -1234,7 +1234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/mapped-types@npm:1.0.1, @nestjs/mapped-types@npm:^1.0.1":
+"@nestjs/mapped-types@npm:1.0.1":
   version: 1.0.1
   resolution: "@nestjs/mapped-types@npm:1.0.1"
   peerDependencies:
@@ -1751,6 +1751,22 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 56738a918c543dba30786066959f801212e7fb5cd4ec53cf7b8d227711ed358834feb9e5141f7f88ec7c642bb39757330a5a8917e3b22e0ff9084940d35f0d70
+  languageName: node
+  linkType: hard
+
+"@types/lodash.groupby@npm:^4":
+  version: 4.6.7
+  resolution: "@types/lodash.groupby@npm:4.6.7"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 2dd7f5c43ca4e2202c73a1217ea550fd54746909c19ef38ababe1a3c851c40b1ba66c027397551f9a6f7acf7217507496e316e6de38f3208f4a1f4548b81933b
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
+  version: 4.14.182
+  resolution: "@types/lodash@npm:4.14.182"
+  checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
   languageName: node
   linkType: hard
 
@@ -3096,23 +3112,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"class-transformer@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "class-transformer@npm:0.5.1"
-  checksum: f191c8b4cc4239990f5efdd790cabdd852c243ed66248e39f6616a349c910c6eed2d9fd1fbf7ee6ea89f69b4f1d0b493b27347fe0cd0ae26b47c3745a805b6d3
-  languageName: node
-  linkType: hard
-
-"class-validator@npm:^0.13.2":
-  version: 0.13.2
-  resolution: "class-validator@npm:0.13.2"
-  dependencies:
-    libphonenumber-js: ^1.9.43
-    validator: ^13.7.0
-  checksum: 0deb4c29faa18345f6989fd7eaaaa07b05caae5298603fcd6485531c6daad503e5d2b24cc1342e4fc88ae5ba0acffdc24d0fc333110ef3f21a667cd8a79e1258
-  languageName: node
-  linkType: hard
-
 "clean-stack@npm:^2.0.0":
   version: 2.2.0
   resolution: "clean-stack@npm:2.2.0"
@@ -3456,6 +3455,13 @@ __metadata:
     whatwg-mimetype: ^2.3.0
     whatwg-url: ^8.0.0
   checksum: 97caf828aac25e25e04ba6869db0f99c75e6859bb5b424ada28d3e7841941ebf08ddff3c1b1bb4585986bd507a5d54c2a716853ea6cb98af877400e637393e71
+  languageName: node
+  linkType: hard
+
+"dataloader@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "dataloader@npm:2.1.0"
+  checksum: bbd43496c41697766f8611f60ed3bae437b450985499140b9603a2447c10d45975d3a0661caaebaa9750bc1bc9fd154676a314423294916c8b8ca1a59a08d139
   languageName: node
   linkType: hard
 
@@ -4407,7 +4413,6 @@ __metadata:
     "@nestjs/core": ^8.4.7
     "@nestjs/graphql": ^10.0.15
     "@nestjs/jwt": ^8.0.1
-    "@nestjs/mapped-types": ^1.0.1
     "@nestjs/platform-express": ^8.4.7
     "@nestjs/schematics": ^8.0.11
     "@nestjs/testing": ^8.4.7
@@ -4418,6 +4423,7 @@ __metadata:
     "@types/eslint-plugin-prettier": ^3.1.0
     "@types/express": ^4.17.13
     "@types/jest": ^27.0.1
+    "@types/lodash.groupby": ^4
     "@types/node": ^16.0.0
     "@types/pg": ^8.6.5
     "@types/prettier": ^2.6.3
@@ -4428,9 +4434,8 @@ __metadata:
     "@typescript-eslint/parser": ^5.0.0
     apollo-server-express: ^3.8.2
     bcrypt: ^5.0.1
-    class-transformer: ^0.5.1
-    class-validator: ^0.13.2
     cron: ^2.0.0
+    dataloader: ^2.1.0
     eslint: ^8.0.1
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^4.0.0
@@ -4441,6 +4446,7 @@ __metadata:
     ioredis: ^5.0.6
     jest: ^27.2.5
     json-to-graphql-query: ^2.2.4
+    lodash.groupby: ^4.6.0
     pg: ^8.7.3
     prettier: ^2.3.2
     prettier-plugin-organize-imports: ^2.3.4
@@ -5927,13 +5933,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libphonenumber-js@npm:^1.9.43":
-  version: 1.10.6
-  resolution: "libphonenumber-js@npm:1.10.6"
-  checksum: 8754240b52f87bacfec01aa55f0cf6393d898ec5548c6da92a68ed1b4cb6129a1be9353e0f4c1b7e7ba9035b380d5a0d7d3142929dea5ad44bfe8d21934fbc2d
-  languageName: node
-  linkType: hard
-
 "lines-and-columns@npm:^1.1.6":
   version: 1.2.4
   resolution: "lines-and-columns@npm:1.2.4"
@@ -5968,6 +5967,13 @@ __metadata:
   version: 4.4.0
   resolution: "lodash.flatten@npm:4.4.0"
   checksum: 0ac34a393d4b795d4b7421153d27c13ae67e08786c9cbb60ff5b732210d46f833598eee3fb3844bb10070e8488efe390ea53bb567377e0cb47e9e630bf0811cb
+  languageName: node
+  linkType: hard
+
+"lodash.groupby@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "lodash.groupby@npm:4.6.0"
+  checksum: e2d4d13d12790a1cacab3f5f120b7c072a792224e83b2f403218866d18efde76024b2579996dfebb230a61ce06469332e16639103669a35a605287e19ced6b9b
   languageName: node
   linkType: hard
 
@@ -8539,7 +8545,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"validator@npm:^13.6.0, validator@npm:^13.7.0":
+"validator@npm:^13.6.0":
   version: 13.7.0
   resolution: "validator@npm:13.7.0"
   checksum: 2b83283de1222ca549a7ef57f46e8d49c6669213348db78b7045bce36a3b5843ff1e9f709ebf74574e06223461ee1f264f8cc9a26a0060a79a27de079d8286ef

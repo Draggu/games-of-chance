@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CurrentUser } from 'directives/auth/current-user.decorator';
-import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
-import { UserEntity } from 'modules/user/entities/user.entity';
+import { CurrentUser } from 'directives/auth/types';
+import { GameRandomizerService } from 'modules/game-randomizer/services/game-randomizer.service';
 import { Repository } from 'typeorm';
 import { DiceSeedEntity } from '../entities/dice-seed.entity';
 
@@ -13,14 +12,6 @@ export class DiceSeedService {
         private readonly diceSeedRepository: Repository<DiceSeedEntity>,
         private readonly gameRandomizerService: GameRandomizerService,
     ) {}
-
-    getSeed(user: UserEntity) {
-        return this.diceSeedRepository.findOneOrFail({
-            where: {
-                user,
-            },
-        });
-    }
 
     updateSeed(
         currentUser: CurrentUser,

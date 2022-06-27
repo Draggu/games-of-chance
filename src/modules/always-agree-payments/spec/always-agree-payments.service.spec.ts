@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AlwaysAgreePaymentsService } from '../always-agree-payments.service';
+import { AlwaysAgreePaymentsService } from '../services/always-agree-payments.service';
 
 describe('AlwaysAgreePaymentsService', () => {
     let service: AlwaysAgreePaymentsService;

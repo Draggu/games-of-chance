@@ -2,24 +2,23 @@ import {
     Args,
     ID,
     Mutation,
-    Parent,
     Query,
-    ResolveField,
     Resolver,
     Subscription,
 } from '@nestjs/graphql';
 import { PageInput } from 'common/dto/page';
-import { Auth, CurrentUser } from 'directives/auth/current-user.decorator';
+import { Auth } from 'directives/auth/decorators/current-user.decorator';
+import { CurrentUser } from 'directives/auth/types';
 import { BalanceDirective } from 'directives/balance/balance-directive.decorator';
 import { PubSubService } from 'infrastructure/pub-sub/pub-sub.service';
-import { PlaceRouletteBetInput } from './dto/place-bet.input';
-import { RouletteBetEntity } from './entities/roulette-bet.entity';
-import { RouletteRollEntity } from './entities/roulette-roll.entity';
-import { RouletteSeedEntity } from './entities/roulette-seed.entity';
-import { RouletteStatsEntity } from './entities/roulette-stats.entity';
-import { RouletteService } from './services/roulette.service';
+import { PlaceRouletteBetInput } from '../dto/place-bet.input';
+import { RouletteBetEntity } from '../entities/roulette-bet.entity';
+import { RouletteRollEntity } from '../entities/roulette-roll.entity';
+import { RouletteSeedEntity } from '../entities/roulette-seed.entity';
+import { RouletteStatsEntity } from '../entities/roulette-stats.entity';
+import { RouletteService } from '../services/roulette.service';
 
-@Resolver(() => RouletteSeedEntity)
+@Resolver()
 export class RouletteResolver {
     constructor(
         private readonly rouletteService: RouletteService,
@@ -38,12 +37,15 @@ export class RouletteResolver {
         return this.pubSubService.asyncIterator('onRouletteResults');
     }
 
-    @Mutation(() => RouletteBetEntity)
     @BalanceDirective()
+    @Mutation(() => RouletteBetEntity, {
+        nullable: true,
+        description: 'returns null if game is currently running',
+    })
     placeRouletteBet(
         @Auth() currentUser: CurrentUser,
         @Args('bet') bet: PlaceRouletteBetInput,
-    ): Promise<RouletteBetEntity> {
+    ): Promise<RouletteBetEntity | null> {
         return this.rouletteService.placeBet(currentUser, bet);
     }
 
@@ -54,7 +56,7 @@ export class RouletteResolver {
 
     @Query(() => [RouletteRollEntity])
     rouletteRollHistory(
-        @Args('page', { defaultValue: {} }) page: PageInput,
+        @Args('page') page: PageInput,
     ): Promise<RouletteRollEntity[]> {
         return this.rouletteService.roulleteHistory(page);
     }
@@ -64,12 +66,5 @@ export class RouletteResolver {
         @Args('page') page: PageInput,
     ): Promise<RouletteSeedEntity[]> {
         return this.rouletteService.seedsHistory(page);
-    }
-
-    @ResolveField(() => Boolean)
-    isHashed(
-        @Parent() seed: RouletteSeedEntity & { isHashed?: boolean },
-    ): boolean {
-        return !!seed.isHashed;
     }
 }

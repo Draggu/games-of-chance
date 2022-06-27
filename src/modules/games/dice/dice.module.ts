@@ -4,6 +4,7 @@ import { GameRandomizerModule } from 'modules/game-randomizer/game-randomizer.mo
 import { UserModule } from 'modules/user/user.module';
 import { DiceRollEntity } from './entities/dice-roll.entity';
 import { DiceSeedEntity } from './entities/dice-seed.entity';
+import { DiceRollUserEnhancerResolver } from './resolver-enhancers/dice.user-enhancer.resolver';
 import { DiceRollResolver } from './resolvers/dice-roll.resolver';
 import { DiceSeedResolver } from './resolvers/dice-seed.resolver';
 import { DiceRollService } from './services/dice-roll.service';
@@ -19,6 +20,7 @@ import { DiceSeedSubscriber } from './subscribers/dice-seed.subscriber';
     providers: [
         DiceRollResolver,
         DiceSeedResolver,
+        DiceRollUserEnhancerResolver,
         DiceRollService,
         DiceSeedService,
         DiceSeedSubscriber,

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { GameRandomizerService } from './game-randomizer.service';
+import { GameRandomizerService } from './services/game-randomizer.service';
 
 @Module({
     providers: [GameRandomizerService],

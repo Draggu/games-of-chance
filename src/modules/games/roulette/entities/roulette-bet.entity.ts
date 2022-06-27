@@ -18,7 +18,7 @@ export class RouletteBetEntity {
     @Field(() => ID)
     id: number;
 
-    @ManyToOne(() => UserEntity, (user) => user.rouletteBets, {
+    @ManyToOne(() => UserEntity, {
         nullable: false,
     })
     @JoinColumn({ name: 'userId' })

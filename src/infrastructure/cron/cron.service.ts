@@ -34,13 +34,13 @@ export class CronService implements OnApplicationBootstrap {
                     const nextRunDate = await this.redis.get(name);
                     const time = +(nextRunDate || 0);
                     const now = new Date();
-                    const secondsSinceEpoch = Math.round(now.getTime() / 1000);
+                    const secondsSinceEpoch = now.getTime();
 
                     if (time < secondsSinceEpoch) {
                         await action(async () => {
                             await this.redis.set(
                                 name,
-                                job.nextDate().toSeconds(),
+                                job.nextDate().toMillis(),
                             );
                         });
                     }

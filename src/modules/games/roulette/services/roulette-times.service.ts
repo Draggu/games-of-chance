@@ -9,7 +9,9 @@ export class RouletteTimesService {
     readonly allowBetTime = this.config.get('ROULETTE_ALLOW_BET_TIME', 15);
 
     nowBackedOfBetTime(extra = 0) {
-        return `NOW() - INTERVAL '${this.allowBetTime + extra} seconds'`;
+        return `(NOW() at time zone 'utc') - INTERVAL '${
+            this.allowBetTime + extra
+        } seconds'`;
     }
 
     nowBackedOfIncreasedBetTime() {

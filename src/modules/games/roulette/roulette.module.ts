@@ -8,7 +8,11 @@ import { RouletteBetEntity } from './entities/roulette-bet.entity';
 import { RouletteRollEntity } from './entities/roulette-roll.entity';
 import { RouletteSeedEntity } from './entities/roulette-seed.entity';
 import { RouletteStatsEntity } from './entities/roulette-stats.entity';
-import { RouletteResolver } from './roulette.resolver';
+import { RouletteBetEnhancerResolver } from './resolvers-enhancers/roulette.bet-enhancer.resolver';
+import { RouletteRollEnhancerResolver } from './resolvers-enhancers/roulette.roll-enhancer.resolver';
+import { RouletteSeedEnhancerResolver } from './resolvers-enhancers/roulette.seed-enhancer.resolver';
+import { RouletteUserEnhancerResolver } from './resolvers-enhancers/roulette.user-enhancer.resolver';
+import { RouletteResolver } from './resolvers/roulette.resolver';
 import { RouletteGameResultsScheduler } from './schedulers/game-results.scheduler';
 import { RouletteSeedScheduler } from './schedulers/game-seed.scheduler';
 import { RouletteGameStartScheduler } from './schedulers/game-start.scheduler';
@@ -32,13 +36,17 @@ import { RollSubscriber } from './subscribers/roll.subscriber';
     ],
     providers: [
         RouletteResolver,
+        RouletteUserEnhancerResolver,
+        RouletteBetEnhancerResolver,
+        RouletteRollEnhancerResolver,
+        RouletteSeedEnhancerResolver,
         RouletteService,
         RouletteTimesService,
-        BetSubscriber,
-        RollSubscriber,
         RouletteGameResultsScheduler,
         RouletteGameStartScheduler,
         RouletteSeedScheduler,
+        BetSubscriber,
+        RollSubscriber,
     ],
 })
 export class RouletteModule {}

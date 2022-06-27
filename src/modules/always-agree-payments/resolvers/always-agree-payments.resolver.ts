@@ -1,8 +1,9 @@
 import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
-import { Auth, CurrentUser } from 'directives/auth/current-user.decorator';
+import { Auth } from 'directives/auth/decorators/current-user.decorator';
+import { CurrentUser } from 'directives/auth/types';
 import { BalanceDirective } from 'directives/balance/balance-directive.decorator';
-import { AlwaysAgreePaymentsService } from './always-agree-payments.service';
-import { BalanceEntity } from './entites/balance.entity';
+import { BalanceEntity } from '../entites/balance.entity';
+import { AlwaysAgreePaymentsService } from '../services/always-agree-payments.service';
 
 @Resolver()
 export class AlwaysAgreePaymentsResolver {

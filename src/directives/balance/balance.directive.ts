@@ -1,9 +1,6 @@
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
-import {
-    GqlDirectiveFactory,
-    SchemaTransform,
-} from 'config/graphql.module.config';
+import { GqlDirectiveFactory } from 'config/graphql.module.config';
 import { Request } from 'express';
 import {
     assertObjectType,
@@ -13,11 +10,16 @@ import {
     isObjectType,
     isUnionType,
 } from 'graphql';
+import { SchemaTransform } from 'helpers/schema/transform';
 import { BalanceTooLowError } from './balance-to-low.error';
 
 @Injectable()
 export class BalanceDirective implements GqlDirectiveFactory {
     readonly typeDefs = /* GraphQL */ `
+        """
+        requires balance to be high enough
+        if it's too low returns BalanceTooLowError
+        """
         directive @balance on FIELD_DEFINITION
     `;
 

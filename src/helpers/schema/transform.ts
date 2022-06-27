@@ -1,7 +1,9 @@
 import { mergeSchemas } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
 
-type Transforms = ((schema: GraphQLSchema) => GraphQLSchema)[];
+export type SchemaTransform = (schema: GraphQLSchema) => GraphQLSchema;
+
+type Transforms = SchemaTransform[];
 
 const callTransforms = (transforms: Transforms, schema: GraphQLSchema) =>
     transforms.reduce((schema, transform) => transform(schema), schema);

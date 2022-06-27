@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageInput } from 'common/dto/page';
-import { CurrentUser } from 'directives/auth/current-user.decorator';
-import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
+import { CurrentUser } from 'directives/auth/types';
+import { GameRandomizerService } from 'modules/game-randomizer/services/game-randomizer.service';
 import { UserBalanceService } from 'modules/user/services/user-balance.service';
 import { Repository } from 'typeorm';
 import { DiceRollSide, unreachableChances } from '../consts';
@@ -13,8 +13,6 @@ import { DiceSeedEntity } from '../entities/dice-seed.entity';
 @Injectable()
 export class DiceRollService {
     constructor(
-        @InjectRepository(DiceSeedEntity)
-        private readonly diceSeedRepository: Repository<DiceSeedEntity>,
         @InjectRepository(DiceRollEntity)
         private readonly diceRollRepository: Repository<DiceRollEntity>,
         private readonly gameRandomizerService: GameRandomizerService,
@@ -25,7 +23,7 @@ export class DiceRollService {
         currentUser: CurrentUser,
         { amount, chances, side }: DiceRollInput,
     ) {
-        return this.diceSeedRepository.manager.transaction(async (manager) => {
+        return this.diceRollRepository.manager.transaction(async (manager) => {
             // charge user account to lock cash for potential lose
             // also checks if user have enough to play
             await this.userBalanceService.updateBalance(
@@ -35,6 +33,7 @@ export class DiceRollService {
                 manager,
             );
 
+            // safe because all queries are SELECT ones
             const [seed, prevRoll] = await Promise.all([
                 manager.findOneOrFail(DiceSeedEntity, {
                     where: {
@@ -43,11 +42,9 @@ export class DiceRollService {
                 }),
                 manager.findOne(DiceRollEntity, {
                     order: {
-                        timestamp: 'DESC',
+                        createdAt: 'DESC',
                     },
-                    where: {
-                        user: currentUser,
-                    },
+                    where: {},
                 }),
             ]);
 
@@ -80,35 +77,24 @@ export class DiceRollService {
                 .createQueryBuilder()
                 .insert()
                 .into(DiceRollEntity)
-                .values([
-                    {
-                        id: currentRollId,
-                        user: currentUser,
-                        winning: roll,
-                        seed,
-                        amount,
-                        chances,
-                        side,
-                        won,
-                    },
-                ])
+                .values({
+                    id: currentRollId,
+                    user: currentUser,
+                    winning: roll,
+                    seed,
+                    amount,
+                    chances,
+                    side,
+                    won,
+                })
                 .returning('*')
                 .execute()
                 .then(({ raw }) => raw[0]);
         });
     }
 
-    rollHistory(
-        currentUser: CurrentUser,
-        { skip, take }: PageInput,
-        onlyOwn: boolean,
-    ) {
+    rollHistory({ skip, take }: PageInput) {
         return this.diceRollRepository.find({
-            where: onlyOwn
-                ? {
-                      user: currentUser,
-                  }
-                : undefined,
             take,
             skip: skip * take,
         });

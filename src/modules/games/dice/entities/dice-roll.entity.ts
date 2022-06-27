@@ -2,7 +2,6 @@ import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 import { UserEntity } from 'modules/user/entities/user.entity';
 import {
     Column,
-    CreateDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
@@ -42,8 +41,8 @@ export class DiceRollEntity {
     @Column()
     won: boolean;
 
-    @CreateDateColumn()
-    timestamp: Date;
+    @Column({ type: 'timestamp', default: () => 'NOW()' })
+    createdAt: Date;
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })

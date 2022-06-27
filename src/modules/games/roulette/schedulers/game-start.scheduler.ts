@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CronService } from 'infrastructure/cron/cron.service';
 import { PubSubService } from 'infrastructure/pub-sub/pub-sub.service';
-import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
+import { GameRandomizerService } from 'modules/game-randomizer/services/game-randomizer.service';
 import { DataSource, Repository } from 'typeorm';
 import { RouletteBetColor } from '../consts';
 import { RouletteRollEntity } from '../entities/roulette-roll.entity';
@@ -24,7 +24,6 @@ export class RouletteGameStartScheduler implements OnModuleInit {
     ) {}
     onModuleInit() {
         const { roundTime } = this.rouletteTimesService;
-
         this.cronService.schedule(
             `0/${roundTime} * * * * *`,
             'roulette-create-game',

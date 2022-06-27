@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GameRandomizerService } from '../game-randomizer.service';
+import { GameRandomizerService } from '../services/game-randomizer.service';
 
 describe('GameRandomizerService', () => {
     let service: GameRandomizerService;

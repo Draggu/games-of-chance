@@ -20,6 +20,9 @@ export class BalanceTooLowError {
             error.constraint === BalanceNotNegativeConstraint
         ) {
             const balanceUnder0 = parseInt(
+                // this works because user#balance is last column
+                // so it matches 'some info (column1,column2,balance).'
+                // where balance is negative
                 /\-(\d+)\)\.$/.exec(error.detail!)![0],
             );
             const currentBalance = balanceUnder0 + amount;

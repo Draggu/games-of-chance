@@ -1,4 +1,4 @@
-import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
+import { GameRandomizerService } from 'modules/game-randomizer/services/game-randomizer.service';
 import { UserEntity } from 'modules/user/entities/user.entity';
 import {
     DataSource,

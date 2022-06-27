@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CronService } from 'infrastructure/cron/cron.service';
-import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
+import { GameRandomizerService } from 'modules/game-randomizer/services/game-randomizer.service';
 import { Repository } from 'typeorm';
 import { RouletteSeedEntity } from '../entities/roulette-seed.entity';
 

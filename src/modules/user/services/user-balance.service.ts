@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CurrentUser } from 'directives/auth/current-user.decorator';
+import { CurrentUser } from 'directives/auth/types';
 import { Repository } from 'typeorm';
 import { BalanceTooLowError } from '../../../directives/balance/balance-to-low.error';
 import { UserEntity } from '../entities/user.entity';

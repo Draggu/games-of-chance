@@ -6,15 +6,13 @@ import { cors } from 'common/cors';
 import { AuthDirective } from 'directives/auth/auth.directive';
 import { BalanceTooLowError } from 'directives/balance/balance-to-low.error';
 import { BalanceDirective } from 'directives/balance/balance.directive';
-import { GraphQLSchema, lexicographicSortSchema } from 'graphql';
+import { lexicographicSortSchema } from 'graphql';
 import {
     constraintDirective,
     constraintDirectiveTypeDefs,
 } from 'graphql-constraint-directive';
 import { printSchemaToFile } from 'helpers/schema/print';
-import { transformSchema } from 'helpers/schema/transform';
-
-export type SchemaTransform = (schema: GraphQLSchema) => GraphQLSchema;
+import { SchemaTransform, transformSchema } from 'helpers/schema/transform';
 
 export interface GqlDirectiveFactory {
     typeDefs: string;
@@ -54,7 +52,7 @@ export class GraphQlModuleConfig implements GqlOptionsFactory {
                 print: printSchemaToFile('schema.gql'),
             }),
             fieldResolverEnhancers: ['filters'],
-            context: ({ req }) => ({ req }),
+            context: ({ req }) => ({ req, startTime: Date.now() }),
             buildSchemaOptions: {
                 orphanedTypes: [BalanceTooLowError],
             },

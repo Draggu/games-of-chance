@@ -1,12 +1,6 @@
 import { Field, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
-import { RouletteBetEntity } from 'modules/games/roulette/entities/roulette-bet.entity';
-import {
-    Check,
-    Column,
-    Entity,
-    OneToMany,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Ownership } from 'directives/auth/decorators/ownership.decorator';
+import { Check, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BalanceNotNegativeConstraint } from '../consts';
 
 @Entity()
@@ -23,18 +17,15 @@ export class UserEntity {
     name: string;
 
     @Column({ select: false })
+    @HideField()
     password: string;
 
     @Column()
+    @Ownership('id')
     email: string;
 
     @Column({ type: 'integer', default: 0 })
+    @Ownership('id')
     @Field(() => Int)
     balance: number;
-
-    // bets history
-
-    @OneToMany(() => RouletteBetEntity, (bet) => bet.user)
-    @HideField()
-    rouletteBets: RouletteBetEntity[];
 }

@@ -8,8 +8,19 @@ schema {
   subscription: Subscription
 }
 
-directive @auth on FIELD_DEFINITION
+"""
+requires authorization
 
+allowed forms:
+    - http headers
+        - Authorization: Bearer <token>
+"""
+directive @auth(onlyOwn: Boolean = false, optional: Boolean = false) on FIELD_DEFINITION
+
+"""
+requires balance to be high enough
+if it's too low returns BalanceTooLowError
+"""
 directive @balance on FIELD_DEFINITION
 
 directive @constraint(contains: String, endsWith: String, exclusiveMax: Float, exclusiveMin: Float, format: String, max: Float, maxLength: Int, min: Float, minLength: Int, multipleOf: Float, notContains: String, pattern: String, startsWith: String, uniqueTypeName: String) on ARGUMENT_DEFINITION | FIELD_DEFINITION | INPUT_FIELD_DEFINITION
@@ -38,9 +49,9 @@ scalar DateTime
 type DiceRollEntity {
   amount: Int!
   chances: Int!
+  createdAt: DateTime!
   nonce: Int!
   side: DiceRollSide!
-  timestamp: DateTime!
   winning: Int!
   won: Boolean!
 }
@@ -73,6 +84,7 @@ input LoginInput {
 type Mutation {
   deposit(amount: Int!): BalanceEntity! @auth
   login(login: LoginInput!): AuthPayload!
+  """returns null if game is currently running"""
   placeRouletteBet(bet: PlaceRouletteBetInput!): RouletteBetEntityOrBalanceTooLowError @balance @auth
   register(register: RegisterInput!): AuthPayload!
   rollDice(createDiceInput: DiceRollInput!): DiceRollEntityOrBalanceTooLowError @balance @auth
@@ -92,9 +104,10 @@ input PlaceRouletteBetInput {
 }
 
 type Query {
-  diceRollHistory(onlyOwn: Boolean = false, page: PageInput!): [DiceRollEntity!]! @auth
-  findUser(id: ID): UserEntity! @auth
-  rouletteRollHistory(page: PageInput = {skip: 0, take: 10}): [RouletteRollEntity!]!
+  diceRollHistory(page: PageInput!): [DiceRollEntity!]!
+  """either there must be specified id or you must be authenticated"""
+  findUser(id: ID): UserEntity! @auth(optional: true)
+  rouletteRollHistory(page: PageInput!): [RouletteRollEntity!]!
   rouletteSeedsHistory(page: PageInput!): [RouletteSeedEntity!]!
   rouletteStats: RouletteStatsEntity!
 }
@@ -115,19 +128,21 @@ type RouletteBetEntity {
   amount: Int!
   color: RouletteBetColor!
   id: ID!
+  roll: RouletteRollEntity
 }
 
 union RouletteBetEntityOrBalanceTooLowError = BalanceTooLowError | RouletteBetEntity
 
 type RouletteRollEntity {
   color: RouletteBetColor!
+  createdAt: DateTime!
   nonce: Int!
-  timestamp: DateTime!
+  seed: RouletteSeedEntity!
   winning: Int!
 }
 
 type RouletteSeedEntity {
-  day: String!
+  day: DateTime!
   id: ID!
   isHashed: Boolean!
   privateKey: String!
@@ -152,10 +167,11 @@ input UpdateUserInput {
 }
 
 type UserEntity {
-  balance: Int!
-  diceSeed: DiceSeedEntity!
-  email: String!
+  balance: Int @auth(onlyOwn: true)
+  diceRolls(page: PageInput!): [DiceRollEntity!]!
+  diceSeed: DiceSeedEntity @auth(onlyOwn: true)
+  email: String @auth(onlyOwn: true)
   id: ID!
   name: String!
-  password: String!
+  rouletteBets(page: PageInput!): [RouletteBetEntity!]!
 }

@@ -1,9 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageInput } from 'common/dto/page';
-import { CurrentUser } from 'directives/auth/current-user.decorator';
-import { sha256 } from 'helpers/sha256';
-import { GameRandomizerService } from 'modules/game-randomizer/game-randomizer.service';
+import { CurrentUser } from 'directives/auth/types';
+import { GameRandomizerService } from 'modules/game-randomizer/services/game-randomizer.service';
 import { RouletteSeedEntity } from 'modules/games/roulette/entities/roulette-seed.entity';
 import { Repository } from 'typeorm';
 import { PlaceRouletteBetInput } from '../dto/place-bet.input';
@@ -31,6 +30,8 @@ export class RouletteService implements OnModuleInit {
         await Promise.allSettled([
             this.rouletteStatsRepository.insert({}),
             this.rouletteSeedRepository.insert({
+                // FIXME
+                // typeorm ignores insert of PrimaryGeneratedColumn
                 id: 1,
                 privateKey: this.gameRandomizerService.generateKey(),
                 publicKey: this.gameRandomizerService.generateKey(),
@@ -41,21 +42,23 @@ export class RouletteService implements OnModuleInit {
     async placeBet(
         currentUser: CurrentUser,
         { amount, color }: PlaceRouletteBetInput,
-    ): Promise<RouletteBetEntity> {
+    ): Promise<RouletteBetEntity | null> {
         const timestamp = this.rouletteTimesService.nowBackedOfBetTime();
 
         const currentRoll = await this.rouletteRollRepository
             .createQueryBuilder()
-            .orderBy('timestamp', 'DESC')
-            .where(`timestamp >= ${timestamp}`)
-            .getOneOrFail();
+            .orderBy('"createdAt"', 'DESC')
+            .where(`"createdAt" >= ${timestamp}`)
+            .getOne();
 
-        return this.rouletteBetRepository.save({
-            amount,
-            color,
-            roll: currentRoll,
-            user: currentUser,
-        });
+        return currentRoll
+            ? this.rouletteBetRepository.save({
+                  amount,
+                  color,
+                  roll: currentRoll,
+                  user: currentUser,
+              })
+            : null;
     }
 
     rouletteStats() {
@@ -72,31 +75,17 @@ export class RouletteService implements OnModuleInit {
 
         return this.rouletteRollRepository
             .createQueryBuilder()
-            .orderBy('timestamp', 'DESC')
-            .where(`timestamp < ${timestamp}`)
+            .orderBy('"createdAt"', 'DESC')
+            .where(`"createdAt" < ${timestamp}`)
             .skip(skip)
             .take(take)
             .getMany();
     }
 
-    async seedsHistory({ take, skip }: PageInput) {
-        const seeds = await this.rouletteSeedRepository.find({
+    seedsHistory({ take, skip }: PageInput) {
+        return this.rouletteSeedRepository.find({
             take,
             skip: take * skip,
         });
-
-        // first page first result is today one
-        if (skip === 0) {
-            const [todaySeed, ...otherSeeds] = seeds;
-            const safeTodaySeed = {
-                ...todaySeed,
-                privateKey: sha256(todaySeed.privateKey),
-                isHashed: true,
-            };
-
-            return [safeTodaySeed, ...otherSeeds];
-        }
-
-        return seeds;
     }
 }

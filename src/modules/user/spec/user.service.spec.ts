@@ -2,14 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { compare } from 'bcrypt';
 import { TestDbModule } from 'helpers/test/test-db.module';
-import { DataSource } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { UserService } from '../services/user.service';
 
 describe('UserService', () => {
     let service: UserService;
     let testingModule: TestingModule;
-    let dataSource: DataSource;
 
     beforeAll(async () => {
         testingModule = await Test.createTestingModule({
@@ -18,7 +16,6 @@ describe('UserService', () => {
         }).compile();
 
         service = testingModule.get<UserService>(UserService);
-        dataSource = testingModule.get<DataSource>(DataSource);
     });
 
     afterAll(() => testingModule.close());
