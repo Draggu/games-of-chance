@@ -1222,18 +1222,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/jwt@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "@nestjs/jwt@npm:8.0.1"
-  dependencies:
-    "@types/jsonwebtoken": 8.5.8
-    jsonwebtoken: 8.5.1
-  peerDependencies:
-    "@nestjs/common": ^6.0.0 || ^7.0.0 || ^8.0.0
-  checksum: 0af21c609ebc023be009c1fc02c59d6d58548ba54f0648bb8b5bf4d70f334f554690cdf14df889dc424fe170c50d5fd4e6f2adf98a1d493b241899dc96f3c8be
-  languageName: node
-  linkType: hard
-
 "@nestjs/mapped-types@npm:1.0.1":
   version: 1.0.1
   resolution: "@nestjs/mapped-types@npm:1.0.1"
@@ -1745,21 +1733,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:8.5.8":
-  version: 8.5.8
-  resolution: "@types/jsonwebtoken@npm:8.5.8"
-  dependencies:
-    "@types/node": "*"
-  checksum: 56738a918c543dba30786066959f801212e7fb5cd4ec53cf7b8d227711ed358834feb9e5141f7f88ec7c642bb39757330a5a8917e3b22e0ff9084940d35f0d70
-  languageName: node
-  linkType: hard
-
 "@types/lodash.groupby@npm:^4":
   version: 4.6.7
   resolution: "@types/lodash.groupby@npm:4.6.7"
   dependencies:
     "@types/lodash": "*"
   checksum: 2dd7f5c43ca4e2202c73a1217ea550fd54746909c19ef38ababe1a3c851c40b1ba66c027397551f9a6f7acf7217507496e316e6de38f3208f4a1f4548b81933b
+  languageName: node
+  linkType: hard
+
+"@types/lodash.keyby@npm:^4":
+  version: 4.6.7
+  resolution: "@types/lodash.keyby@npm:4.6.7"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 599ecefd8d4a1eb06c277b5f3f14e82ef9e58a1b7d8fc75490f0d5ee5e43069bae08f0408cb54675e7c1005c9f280ee57a537eafe69a22da5271cd6b815e4e1f
   languageName: node
   linkType: hard
 
@@ -2899,13 +2887,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer-equal-constant-time@npm:1.0.1":
-  version: 1.0.1
-  resolution: "buffer-equal-constant-time@npm:1.0.1"
-  checksum: 80bb945f5d782a56f374b292770901065bad21420e34936ecbe949e57724b4a13874f735850dd1cc61f078773c4fb5493a41391e7bda40d1fa388d6bd80daaab
-  languageName: node
-  linkType: hard
-
 "buffer-from@npm:^1.0.0":
   version: 1.1.2
   resolution: "buffer-from@npm:1.1.2"
@@ -3658,15 +3639,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ecdsa-sig-formatter@npm:1.0.11":
-  version: 1.0.11
-  resolution: "ecdsa-sig-formatter@npm:1.0.11"
-  dependencies:
-    safe-buffer: ^5.0.1
-  checksum: 207f9ab1c2669b8e65540bce29506134613dd5f122cccf1e6a560f4d63f2732d427d938f8481df175505aad94583bcb32c688737bb39a6df0625f903d6d93c03
-  languageName: node
-  linkType: hard
-
 "ee-first@npm:1.1.1":
   version: 1.1.1
   resolution: "ee-first@npm:1.1.1"
@@ -4412,7 +4384,6 @@ __metadata:
     "@nestjs/config": ^2.1.0
     "@nestjs/core": ^8.4.7
     "@nestjs/graphql": ^10.0.15
-    "@nestjs/jwt": ^8.0.1
     "@nestjs/platform-express": ^8.4.7
     "@nestjs/schematics": ^8.0.11
     "@nestjs/testing": ^8.4.7
@@ -4424,6 +4395,7 @@ __metadata:
     "@types/express": ^4.17.13
     "@types/jest": ^27.0.1
     "@types/lodash.groupby": ^4
+    "@types/lodash.keyby": ^4
     "@types/node": ^16.0.0
     "@types/pg": ^8.6.5
     "@types/prettier": ^2.6.3
@@ -4447,6 +4419,7 @@ __metadata:
     jest: ^27.2.5
     json-to-graphql-query: ^2.2.4
     lodash.groupby: ^4.6.0
+    lodash.keyby: ^4.6.0
     pg: ^8.7.3
     prettier: ^2.3.2
     prettier-plugin-organize-imports: ^2.3.4
@@ -5860,45 +5833,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonwebtoken@npm:8.5.1":
-  version: 8.5.1
-  resolution: "jsonwebtoken@npm:8.5.1"
-  dependencies:
-    jws: ^3.2.2
-    lodash.includes: ^4.3.0
-    lodash.isboolean: ^3.0.3
-    lodash.isinteger: ^4.0.4
-    lodash.isnumber: ^3.0.3
-    lodash.isplainobject: ^4.0.6
-    lodash.isstring: ^4.0.1
-    lodash.once: ^4.0.0
-    ms: ^2.1.1
-    semver: ^5.6.0
-  checksum: 93c9e3f23c59b758ac88ba15f4e4753b3749dfce7a6f7c40fb86663128a1e282db085eec852d4e0cbca4cefdcd3a8275ee255dbd08fcad0df26ad9f6e4cc853a
-  languageName: node
-  linkType: hard
-
-"jwa@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "jwa@npm:1.4.1"
-  dependencies:
-    buffer-equal-constant-time: 1.0.1
-    ecdsa-sig-formatter: 1.0.11
-    safe-buffer: ^5.0.1
-  checksum: ff30ea7c2dcc61f3ed2098d868bf89d43701605090c5b21b5544b512843ec6fd9e028381a4dda466cbcdb885c2d1150f7c62e7168394ee07941b4098e1035e2f
-  languageName: node
-  linkType: hard
-
-"jws@npm:^3.2.2":
-  version: 3.2.2
-  resolution: "jws@npm:3.2.2"
-  dependencies:
-    jwa: ^1.4.1
-    safe-buffer: ^5.0.1
-  checksum: f0213fe5b79344c56cd443428d8f65c16bf842dc8cb8f5aed693e1e91d79c20741663ad6eff07a6d2c433d1831acc9814e8d7bada6a0471fbb91d09ceb2bf5c2
-  languageName: node
-  linkType: hard
-
 "kleur@npm:^3.0.3":
   version: 3.0.3
   resolution: "kleur@npm:3.0.3"
@@ -5977,13 +5911,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.includes@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "lodash.includes@npm:4.3.0"
-  checksum: 71092c130515a67ab3bd928f57f6018434797c94def7f46aafa417771e455ce3a4834889f4267b17887d7f75297dfabd96231bf704fd2b8c5096dc4a913568b6
-  languageName: node
-  linkType: hard
-
 "lodash.isarguments@npm:^3.1.0":
   version: 3.1.0
   resolution: "lodash.isarguments@npm:3.1.0"
@@ -5991,38 +5918,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.isboolean@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "lodash.isboolean@npm:3.0.3"
-  checksum: b70068b4a8b8837912b54052557b21fc4774174e3512ed3c5b94621e5aff5eb6c68089d0a386b7e801d679cd105d2e35417978a5e99071750aa2ed90bffd0250
-  languageName: node
-  linkType: hard
-
-"lodash.isinteger@npm:^4.0.4":
-  version: 4.0.4
-  resolution: "lodash.isinteger@npm:4.0.4"
-  checksum: 6034821b3fc61a2ffc34e7d5644bb50c5fd8f1c0121c554c21ac271911ee0c0502274852845005f8651d51e199ee2e0cfebfe40aaa49c7fe617f603a8a0b1691
-  languageName: node
-  linkType: hard
-
-"lodash.isnumber@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "lodash.isnumber@npm:3.0.3"
-  checksum: 913784275b565346255e6ae6a6e30b760a0da70abc29f3e1f409081585875105138cda4a429ff02577e1bc0a7ae2a90e0a3079a37f3a04c3d6c5aaa532f4cab2
-  languageName: node
-  linkType: hard
-
-"lodash.isplainobject@npm:^4.0.6":
-  version: 4.0.6
-  resolution: "lodash.isplainobject@npm:4.0.6"
-  checksum: 29c6351f281e0d9a1d58f1a4c8f4400924b4c79f18dfc4613624d7d54784df07efaff97c1ff2659f3e085ecf4fff493300adc4837553104cef2634110b0d5337
-  languageName: node
-  linkType: hard
-
-"lodash.isstring@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "lodash.isstring@npm:4.0.1"
-  checksum: eaac87ae9636848af08021083d796e2eea3d02e80082ab8a9955309569cb3a463ce97fd281d7dc119e402b2e7d8c54a23914b15d2fc7fff56461511dc8937ba0
+"lodash.keyby@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "lodash.keyby@npm:4.6.0"
+  checksum: 9dd96cc8b83e05a71dc328f8e489056105bc84b57b4d7f8155d6bf5744dcdb0a5534acdf6e4e89e5ddf71f2bc6b93969b12c6da09d69fdf3b1cca65a8ed61e2b
   languageName: node
   linkType: hard
 
@@ -6044,13 +5943,6 @@ __metadata:
   version: 4.5.0
   resolution: "lodash.omit@npm:4.5.0"
   checksum: 434645e49fe84ab315719bd5a9a3a585a0f624aa4160bc09157dd041a414bcc287c15840365c1379476a3f3eda41fbe838976c3f7bdecbbf4c5478e86c471a30
-  languageName: node
-  linkType: hard
-
-"lodash.once@npm:^4.0.0":
-  version: 4.1.1
-  resolution: "lodash.once@npm:4.1.1"
-  checksum: d768fa9f9b4e1dc6453be99b753906f58990e0c45e7b2ca5a3b40a33111e5d17f6edf2f768786e2716af90a8e78f8f91431ab8435f761fef00f9b0c256f6d245
   languageName: node
   linkType: hard
 
@@ -6413,7 +6305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:2.1.3, ms@npm:^2.0.0, ms@npm:^2.1.1":
+"ms@npm:2.1.3, ms@npm:^2.0.0":
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
   checksum: aa92de608021b242401676e35cfa5aa42dd70cbdc082b916da7fb925c542173e36bce97ea3e804923fe92c0ad991434e4a38327e15a1b5b5f945d66df615ae6d
@@ -7482,15 +7374,6 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 2fa3e877568cd6ce769c75c211beaed1f9fce80b28338cadd9d0b6c40f2e2862bafd62c19a6cff42f3d54292b7c623277bcab8816a2b5521cf15210d43e75232
-  languageName: node
-  linkType: hard
-
-"semver@npm:^5.6.0":
-  version: 5.7.1
-  resolution: "semver@npm:5.7.1"
-  bin:
-    semver: ./bin/semver
-  checksum: 57fd0acfd0bac382ee87cd52cd0aaa5af086a7dc8d60379dfe65fea491fb2489b6016400813930ecd61fd0952dae75c115287a1b16c234b1550887117744dfaf
   languageName: node
   linkType: hard
 

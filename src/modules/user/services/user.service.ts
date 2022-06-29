@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as assert from 'assert';
 import { compare } from 'bcrypt';
 import { CurrentUser } from 'directives/auth/types';
-import { Repository } from 'typeorm';
+import { RegisterInput } from 'modules/auth/dto/auth.input';
+import { In, Repository } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
 
 @Injectable()
@@ -29,7 +30,14 @@ export class UserService {
 
         assert(compare(password, hashedPassword));
 
-        return this.userRepository.create(user);
+        return user as UserEntity;
+    }
+
+    create(
+        { email, password, name }: RegisterInput,
+        manager = this.userRepository.manager,
+    ) {
+        return manager.save(UserEntity, { email, password, name });
     }
 
     findById(id: string) {
@@ -38,16 +46,12 @@ export class UserService {
         });
     }
 
-    create({
-        email,
-        password,
-        name,
-    }: {
-        email: string;
-        password: string;
-        name: string;
-    }) {
-        return this.userRepository.save({ email, password, name });
+    findByIds(ids: string[]) {
+        return this.userRepository.find({
+            where: {
+                id: In(ids),
+            },
+        });
     }
 
     update(

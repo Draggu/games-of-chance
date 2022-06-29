@@ -8,10 +8,10 @@ import { RouletteBetEntity } from './entities/roulette-bet.entity';
 import { RouletteRollEntity } from './entities/roulette-roll.entity';
 import { RouletteSeedEntity } from './entities/roulette-seed.entity';
 import { RouletteStatsEntity } from './entities/roulette-stats.entity';
-import { RouletteBetEnhancerResolver } from './resolvers-enhancers/roulette.bet-enhancer.resolver';
-import { RouletteRollEnhancerResolver } from './resolvers-enhancers/roulette.roll-enhancer.resolver';
-import { RouletteSeedEnhancerResolver } from './resolvers-enhancers/roulette.seed-enhancer.resolver';
-import { RouletteUserEnhancerResolver } from './resolvers-enhancers/roulette.user-enhancer.resolver';
+import { RouletteBetRollFieldsResolver } from './fields-resolvers/roulette-bet-roll-fields.resolver';
+import { RouletteRollSeedFieldsResolver } from './fields-resolvers/roulette-roll-seed-fields.resolver';
+import { RouletteSeedFieldsResolver } from './fields-resolvers/roulette-seed-fields.resolver';
+import { UserRouletteFieldsResolver } from './fields-resolvers/user-roulette-fields.resolver';
 import { RouletteResolver } from './resolvers/roulette.resolver';
 import { RouletteGameResultsScheduler } from './schedulers/game-results.scheduler';
 import { RouletteSeedScheduler } from './schedulers/game-seed.scheduler';
@@ -36,10 +36,10 @@ import { RollSubscriber } from './subscribers/roll.subscriber';
     ],
     providers: [
         RouletteResolver,
-        RouletteUserEnhancerResolver,
-        RouletteBetEnhancerResolver,
-        RouletteRollEnhancerResolver,
-        RouletteSeedEnhancerResolver,
+        UserRouletteFieldsResolver,
+        RouletteBetRollFieldsResolver,
+        RouletteRollSeedFieldsResolver,
+        RouletteSeedFieldsResolver,
         RouletteService,
         RouletteTimesService,
         RouletteGameResultsScheduler,

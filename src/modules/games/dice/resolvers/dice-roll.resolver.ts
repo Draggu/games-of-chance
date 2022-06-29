@@ -7,7 +7,7 @@ import { DiceRollInput } from '../dto/dice-roll.input';
 import { DiceRollEntity } from '../entities/dice-roll.entity';
 import { DiceRollService } from '../services/dice-roll.service';
 
-@Resolver(() => DiceRollEntity)
+@Resolver()
 export class DiceRollResolver {
     constructor(private readonly diceService: DiceRollService) {}
 

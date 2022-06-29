@@ -12,14 +12,16 @@ export class CronService implements OnApplicationBootstrap {
         private readonly redis: Redis,
     ) {}
 
-    private jobs: CronJob[] = [];
+    private jobs: Record<string, CronJob> = {};
 
     onApplicationBootstrap() {
-        this.jobs.forEach((job) => {
-            if (!job.running) {
-                job.start();
-            }
-        });
+        Object.values(this.jobs)
+            .filter((job) => !job.running)
+            .forEach((job) => job.start());
+    }
+
+    getJob(name: string) {
+        return this.jobs[name];
     }
 
     schedule(
@@ -31,12 +33,10 @@ export class CronService implements OnApplicationBootstrap {
         const job = new CronJob(cronExpr, async () => {
             await this.redlock
                 .using([`${name}-Lock`], time, async () => {
-                    const nextRunDate = await this.redis.get(name);
-                    const time = +(nextRunDate || 0);
-                    const now = new Date();
-                    const secondsSinceEpoch = now.getTime();
+                    const maybeTime = await this.redis.get(name);
+                    const nextAllowedRunDate = +(maybeTime || 0);
 
-                    if (time < secondsSinceEpoch) {
+                    if (nextAllowedRunDate < Date.now()) {
                         await action(async () => {
                             await this.redis.set(
                                 name,
@@ -52,7 +52,7 @@ export class CronService implements OnApplicationBootstrap {
                 });
         });
 
-        this.jobs.push(job);
+        this.jobs[name] = job;
 
         return job;
     }

@@ -5,17 +5,14 @@ import { FieldConfig } from 'directives/auth/types';
 import { addTypeToField } from 'helpers/schema/add-type';
 import { resolverReturnCatchedIf } from 'helpers/schema/resolver-return-catched-if';
 import { SchemaTransform } from 'helpers/schema/transform';
-import { BalanceTooLowError } from './balance-to-low.error';
+import { InProgressError } from './in-progress.error';
 
-const isNewFieldValue = (value: unknown) => value instanceof BalanceTooLowError;
+const isNewFieldValue = (value: unknown) => value instanceof InProgressError;
+
 @Injectable()
-export class BalanceDirective implements GqlDirectiveFactory {
+export class MaybeInProgressDirective implements GqlDirectiveFactory {
     readonly typeDefs = /* GraphQL */ `
-        """
-        requires balance to be high enough
-        if it's too low returns BalanceTooLowError
-        """
-        directive @balance on FIELD_DEFINITION
+        directive @maybeInProgress on FIELD_DEFINITION
     `;
 
     create(): SchemaTransform {
@@ -25,15 +22,15 @@ export class BalanceDirective implements GqlDirectiveFactory {
                     const directiveArgs = getDirective(
                         schema,
                         fieldConfig,
-                        'balance',
+                        'maybeInProgress',
                     )?.[0];
 
                     if (directiveArgs) {
                         addTypeToField({
                             schema,
                             fieldConfig,
-                            extraFieldName: BalanceTooLowError.name,
-                            directiveName: 'balance',
+                            extraFieldName: InProgressError.name,
+                            directiveName: 'maybeInProgress',
                             isNewFieldValue,
                         });
 

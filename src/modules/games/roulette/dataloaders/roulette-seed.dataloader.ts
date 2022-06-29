@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as DataLoader from 'dataloader';
+import * as _ from 'lodash';
 import { Repository } from 'typeorm';
 import { RouletteSeedEntity } from '../entities/roulette-seed.entity';
 
@@ -23,9 +24,7 @@ export class RouletteSeedDataloader extends DataLoader<
                     .where('rolls.id IN (:...rollIds)', { rollIds })
                     .getRawMany();
 
-            const seedsByRoll = Object.fromEntries(
-                seeds.map((seed) => [seed.rollId, seed] as const),
-            );
+            const seedsByRoll = _.keyBy(seeds, 'rollId');
 
             return rollIds.map((rollId) => seedsByRoll[rollId]);
         });

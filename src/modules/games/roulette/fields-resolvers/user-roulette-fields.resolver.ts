@@ -6,7 +6,7 @@ import { RouletteBetsDataloader } from '../dataloaders/roulette-bets.dataloader'
 import { RouletteBetEntity } from '../entities/roulette-bet.entity';
 
 @Resolver(() => UserEntity)
-export class RouletteUserEnhancerResolver {
+export class UserRouletteFieldsResolver {
     @ResolveField(() => [RouletteBetEntity])
     rouletteBets(
         @Parent() user: UserEntity,

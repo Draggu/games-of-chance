@@ -8,19 +8,21 @@ import {
     OwnershipMetadata,
     OwnershipTarget,
     Result,
+    RuleNext,
 } from '../types';
 
-export const onlyOwnNullableTypes = (fieldConfig: FieldConfig) => {
+export const ownershipNullableTypes = (fieldConfig: FieldConfig) => {
     const { type } = fieldConfig;
     // all fields that have ownership must be nullable
     fieldConfig.type = isNonNullType(type) ? type.ofType : type;
 };
 
-export const onlyOwnRule =
+export const ownershipRule =
     (parent: Result, info: GraphQLResolveInfo, user?: CurrentUser) =>
-    (result: Result, directiveArgs: AuthProperties) => {
+    (next: RuleNext, directiveArgs: AuthProperties) =>
+    async () => {
         if (!directiveArgs.onlyOwn) {
-            return result;
+            return next();
         }
 
         const extension = Object.entries(info.parentType.getFields())
@@ -36,10 +38,16 @@ export const onlyOwnRule =
             `@auth(ownership=true) has missing extension data on ${info.parentType.name}#${info.fieldName}`,
         );
 
-        const ownerId: string | undefined =
-            extension.on === OwnershipTarget.SELF
-                ? result[extension.field]
-                : parent[extension.field];
+        const ifAccessGranted = (
+            ownerId: string | undefined,
+            result: ReturnType<RuleNext>,
+        ) => (user && user.id === ownerId ? result : null);
 
-        return user && user.id === ownerId ? result : null;
+        if (extension.on === OwnershipTarget.SELF) {
+            const result = await next();
+
+            return ifAccessGranted(result?.[extension.field], result);
+        }
+
+        return ifAccessGranted(parent[extension.field], next());
     };

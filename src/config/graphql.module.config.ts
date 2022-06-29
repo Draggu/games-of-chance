@@ -6,6 +6,8 @@ import { cors } from 'common/cors';
 import { AuthDirective } from 'directives/auth/auth.directive';
 import { BalanceTooLowError } from 'directives/balance/balance-to-low.error';
 import { BalanceDirective } from 'directives/balance/balance.directive';
+import { InProgressError } from 'directives/maybe-in-progress/in-progress.error';
+import { MaybeInProgressDirective } from 'directives/maybe-in-progress/maybe-in-progress.directive';
 import { lexicographicSortSchema } from 'graphql';
 import {
     constraintDirective,
@@ -25,6 +27,7 @@ export class GraphQlModuleConfig implements GqlOptionsFactory {
         private readonly config: ConfigService,
         private readonly authDirective: AuthDirective,
         private readonly balanceDirective: BalanceDirective,
+        private readonly maybeInProgress: MaybeInProgressDirective,
     ) {}
 
     createGqlOptions(): Omit<ApolloDriverConfig, 'driver'> {
@@ -41,6 +44,7 @@ export class GraphQlModuleConfig implements GqlOptionsFactory {
                 beforePrint: [
                     this.authDirective.create(),
                     this.balanceDirective.create(),
+                    this.maybeInProgress.create(),
                     lexicographicSortSchema,
                 ],
                 afterPrint: [constraintDirective()],
@@ -48,13 +52,13 @@ export class GraphQlModuleConfig implements GqlOptionsFactory {
                     constraintDirectiveTypeDefs,
                     this.authDirective.typeDefs,
                     this.balanceDirective.typeDefs,
+                    this.maybeInProgress.typeDefs,
                 ],
                 print: printSchemaToFile('schema.gql'),
             }),
-            fieldResolverEnhancers: ['filters'],
             context: ({ req }) => ({ req, startTime: Date.now() }),
             buildSchemaOptions: {
-                orphanedTypes: [BalanceTooLowError],
+                orphanedTypes: [BalanceTooLowError, InProgressError],
             },
         };
     }

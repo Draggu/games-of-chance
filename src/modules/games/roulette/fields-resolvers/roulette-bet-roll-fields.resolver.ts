@@ -5,7 +5,7 @@ import { RouletteBetEntity } from '../entities/roulette-bet.entity';
 import { RouletteRollEntity } from '../entities/roulette-roll.entity';
 
 @Resolver(() => RouletteBetEntity)
-export class RouletteBetEnhancerResolver {
+export class RouletteBetRollFieldsResolver {
     @ResolveField(() => RouletteRollEntity, {
         nullable: true,
     })

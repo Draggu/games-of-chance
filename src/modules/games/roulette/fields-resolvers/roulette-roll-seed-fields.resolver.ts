@@ -5,7 +5,7 @@ import { RouletteRollEntity } from '../entities/roulette-roll.entity';
 import { RouletteSeedEntity } from '../entities/roulette-seed.entity';
 
 @Resolver(() => RouletteRollEntity)
-export class RouletteRollEnhancerResolver {
+export class RouletteRollSeedFieldsResolver {
     @ResolveField(() => RouletteSeedEntity)
     seed(
         @Parent() rouletteRoll: RouletteSeedEntity,

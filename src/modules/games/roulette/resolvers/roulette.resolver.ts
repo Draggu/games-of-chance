@@ -10,6 +10,7 @@ import { PageInput } from 'common/dto/page';
 import { Auth } from 'directives/auth/decorators/current-user.decorator';
 import { CurrentUser } from 'directives/auth/types';
 import { BalanceDirective } from 'directives/balance/balance-directive.decorator';
+import { MaybeInProgressDirective } from 'directives/maybe-in-progress/maybe-in-progress-directive.decorator';
 import { PubSubService } from 'infrastructure/pub-sub/pub-sub.service';
 import { PlaceRouletteBetInput } from '../dto/place-bet.input';
 import { RouletteBetEntity } from '../entities/roulette-bet.entity';
@@ -38,14 +39,12 @@ export class RouletteResolver {
     }
 
     @BalanceDirective()
-    @Mutation(() => RouletteBetEntity, {
-        nullable: true,
-        description: 'returns null if game is currently running',
-    })
+    @MaybeInProgressDirective()
+    @Mutation(() => RouletteBetEntity)
     placeRouletteBet(
         @Auth() currentUser: CurrentUser,
         @Args('bet') bet: PlaceRouletteBetInput,
-    ): Promise<RouletteBetEntity | null> {
+    ): Promise<RouletteBetEntity> {
         return this.rouletteService.placeBet(currentUser, bet);
     }
 

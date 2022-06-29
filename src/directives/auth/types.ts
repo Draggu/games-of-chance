@@ -11,6 +11,8 @@ export type CurrentUser = Pick<UserEntity, 'id'>;
 
 export type Result = Record<string, string | undefined>;
 
+export type RuleNext = () => Result | null | Promise<Result | null>;
+
 export type OwnershipMetadata = {
     field: string;
     on: OwnershipTarget;

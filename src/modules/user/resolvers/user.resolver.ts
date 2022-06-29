@@ -9,7 +9,7 @@ import { UserService } from '../services/user.service';
 const findUserErrMsg =
     'either there must be specified id or you must be authenticated';
 
-@Resolver(() => UserEntity)
+@Resolver()
 export class UserResolver {
     constructor(private readonly userService: UserService) {}
 

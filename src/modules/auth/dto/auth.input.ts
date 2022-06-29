@@ -1,4 +1,4 @@
-import { Directive, InputType, PickType } from '@nestjs/graphql';
+import { Directive, InputType, OmitType } from '@nestjs/graphql';
 
 @InputType()
 export class RegisterInput {
@@ -8,10 +8,9 @@ export class RegisterInput {
     name: string;
 
     password: string;
+
+    tokenName: string;
 }
 
 @InputType()
-export class LoginInput extends PickType(RegisterInput, [
-    'email',
-    'password',
-]) {}
+export class LoginInput extends OmitType(RegisterInput, ['name']) {}

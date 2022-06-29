@@ -1,38 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { CurrentUser } from 'directives/auth/types';
 import { UserService } from 'modules/user/services/user.service';
+import { DataSource } from 'typeorm';
 import { LoginInput, RegisterInput } from '../dto/auth.input';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly userService: UserService,
-        private readonly jwtService: JwtService,
+        private readonly tokenService: TokenService,
+        private readonly dataSource: DataSource,
     ) {}
 
-    async register(userData: RegisterInput) {
-        const user = await this.userService.create(userData);
-        const token = this.jwtService.sign({ id: user.id });
+    register(userData: RegisterInput) {
+        return this.dataSource.transaction(async (manager) => {
+            const user = await this.userService.create(userData, manager);
+            const token = await this.tokenService.create(
+                user.id,
+                userData.tokenName,
+                manager,
+            );
 
-        return { user, token };
+            return { user, token };
+        });
     }
 
     async login(credentials: LoginInput) {
         const user = await this.userService.findByCredentials(credentials);
-        const token = this.jwtService.sign({ id: user.id });
+        const token = await this.tokenService.create(
+            user.id,
+            credentials.tokenName,
+        );
 
         return { user, token };
     }
 
-    async fromToken(token: string) {
-        try {
-            const { id } = await this.jwtService.verifyAsync<{ id: string }>(
-                token,
-            );
+    logout(currentUser: CurrentUser, tokenName: string) {
+        return this.tokenService.destroyToken(currentUser, tokenName);
+    }
 
-            const user = await this.userService.findById(id);
-
-            return user;
-        } catch {}
+    fromToken(token: string) {
+        return this.tokenService.currentUserByToken(token);
     }
 }

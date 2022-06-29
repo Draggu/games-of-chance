@@ -9,7 +9,7 @@ import { DiceRollEntity } from '../entities/dice-roll.entity';
 import { DiceSeedEntity } from '../entities/dice-seed.entity';
 
 @Resolver(() => UserEntity)
-export class DiceRollUserEnhancerResolver {
+export class UserDiceFieldsResolver {
     @ResolveField(() => [DiceRollEntity])
     diceRolls(
         @Parent() user: UserEntity,

@@ -15,7 +15,11 @@ allowed forms:
     - http headers
         - Authorization: Bearer <token>
 """
-directive @auth(onlyOwn: Boolean = false, optional: Boolean = false) on FIELD_DEFINITION
+directive @auth(
+  """if resource is not owned by current user field id nulled"""
+  onlyOwn: Boolean = false
+  optional: Boolean = false
+) on FIELD_DEFINITION
 
 """
 requires balance to be high enough
@@ -25,9 +29,19 @@ directive @balance on FIELD_DEFINITION
 
 directive @constraint(contains: String, endsWith: String, exclusiveMax: Float, exclusiveMin: Float, format: String, max: Float, maxLength: Int, min: Float, minLength: Int, multipleOf: Float, notContains: String, pattern: String, startsWith: String, uniqueTypeName: String) on ARGUMENT_DEFINITION | FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
+directive @maybeInProgress on FIELD_DEFINITION
+
 type AuthPayload {
-  token: String!
+  token: AuthTokenEntity!
   user: UserEntity!
+}
+
+type AuthTokenEntity {
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  isExpired: Boolean!
+  name: String!
+  token: String!
 }
 
 type BalanceEntity {
@@ -52,6 +66,7 @@ type DiceRollEntity {
   createdAt: DateTime!
   nonce: Int!
   side: DiceRollSide!
+  user: UserEntity!
   winning: Int!
   won: Boolean!
 }
@@ -76,16 +91,22 @@ type DiceSeedEntity {
   previousServerSeed: String
 }
 
+type InProgressError {
+  closedAt: DateTime!
+  nextOpenAt: DateTime
+}
+
 input LoginInput {
   email: String! @constraint(format: "email")
   password: String!
+  tokenName: String!
 }
 
 type Mutation {
   deposit(amount: Int!): BalanceEntity! @auth
   login(login: LoginInput!): AuthPayload!
-  """returns null if game is currently running"""
-  placeRouletteBet(bet: PlaceRouletteBetInput!): RouletteBetEntityOrBalanceTooLowError @balance @auth
+  logout(register: String!): UserToken! @auth
+  placeRouletteBet(bet: PlaceRouletteBetInput!): RouletteBetEntityOrBalanceTooLowErrorOrInProgressError @balance @maybeInProgress @auth
   register(register: RegisterInput!): AuthPayload!
   rollDice(createDiceInput: DiceRollInput!): DiceRollEntityOrBalanceTooLowError @balance @auth
   updateDiceSeed(newSeed: String!): DiceSeedEntity! @auth
@@ -116,6 +137,7 @@ input RegisterInput {
   email: String! @constraint(format: "email")
   name: String!
   password: String!
+  tokenName: String!
 }
 
 enum RouletteBetColor {
@@ -132,6 +154,8 @@ type RouletteBetEntity {
 }
 
 union RouletteBetEntityOrBalanceTooLowError = BalanceTooLowError | RouletteBetEntity
+
+union RouletteBetEntityOrBalanceTooLowErrorOrInProgressError = BalanceTooLowError | InProgressError | RouletteBetEntity
 
 type RouletteRollEntity {
   color: RouletteBetColor!
@@ -174,4 +198,12 @@ type UserEntity {
   id: ID!
   name: String!
   rouletteBets(page: PageInput!): [RouletteBetEntity!]!
+  tokens: [UserToken!] @auth(onlyOwn: true)
+}
+
+type UserToken {
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  isExpired: Boolean!
+  name: String!
 }

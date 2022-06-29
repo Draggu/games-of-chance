@@ -6,7 +6,7 @@ import * as assert from 'assert';
 export class DataloaderPipe implements PipeTransform {
     constructor(private readonly moduleRef: ModuleRef) {}
 
-    async transform(
+    transform(
         dataloadersMap: Map<unknown, unknown>,
         { metatype }: ArgumentMetadata,
     ) {
@@ -18,8 +18,6 @@ export class DataloaderPipe implements PipeTransform {
             dataloadersMap.set(metatype, dataloader);
         }
 
-        const dataloader = await dataloadersMap.get(metatype);
-
-        return dataloader;
+        return dataloadersMap.get(metatype);
     }
 }

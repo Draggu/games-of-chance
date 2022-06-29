@@ -3,7 +3,7 @@ import { sha256 } from 'helpers/sha256';
 import { RouletteSeedEntity } from '../entities/roulette-seed.entity';
 
 @Resolver(() => RouletteSeedEntity)
-export class RouletteSeedEnhancerResolver {
+export class RouletteSeedFieldsResolver {
     private isTooNew(seed: RouletteSeedEntity, startTime: number) {
         // for safety reasons
         // use 5 min offset before revealing seed

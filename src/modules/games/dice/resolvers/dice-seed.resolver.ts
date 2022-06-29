@@ -1,9 +1,10 @@
-import { Args, Mutation } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Auth } from 'directives/auth/decorators/current-user.decorator';
 import { CurrentUser } from 'directives/auth/types';
 import { DiceSeedEntity } from '../entities/dice-seed.entity';
 import { DiceSeedService } from '../services/dice-seed.service';
 
+@Resolver()
 export class DiceSeedResolver {
     constructor(private readonly diceSeedService: DiceSeedService) {}
 

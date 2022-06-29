@@ -11,6 +11,8 @@ import { RouletteTimesService } from '../services/roulette-times.service';
 
 @Injectable()
 export class RouletteGameStartScheduler implements OnModuleInit {
+    private readonly jobName = 'roulette-create-game';
+
     constructor(
         @InjectRepository(RouletteSeedEntity)
         private readonly rouletteSeedRepository: Repository<RouletteSeedEntity>,
@@ -22,11 +24,16 @@ export class RouletteGameStartScheduler implements OnModuleInit {
         private readonly pubSubService: PubSubService,
         private readonly dataSource: DataSource,
     ) {}
+
+    getJob() {
+        return this.cronService.getJob(this.jobName);
+    }
+
     onModuleInit() {
         const { roundTime } = this.rouletteTimesService;
         this.cronService.schedule(
             `0/${roundTime} * * * * *`,
-            'roulette-create-game',
+            this.jobName,
             async (done) => {
                 const [lastRoll, lastSeed] = await Promise.all([
                     this.rouletteRollRepository.findOne({

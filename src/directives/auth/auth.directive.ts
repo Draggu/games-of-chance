@@ -1,14 +1,13 @@
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
-import * as assert from 'assert';
 import { GqlDirectiveFactory } from 'config/graphql.module.config';
 import { Request } from 'express';
 import { SchemaTransform } from 'helpers/schema/transform';
 import { AuthService } from 'modules/auth/services/auth.service';
 import { currentUserSymbol, userPromiseSymbol } from './consts';
-import { onlyOwnNullableTypes, onlyOwnRule } from './rules/only-own.rule';
 import { optionalRule } from './rules/optional.rule';
-import { AuthProperties, CurrentUser, FieldConfig, Result } from './types';
+import { ownershipNullableTypes, ownershipRule } from './rules/ownership.rule';
+import { AuthProperties, CurrentUser, FieldConfig, RuleNext } from './types';
 
 @Injectable()
 export class AuthDirective implements GqlDirectiveFactory {
@@ -22,6 +21,9 @@ export class AuthDirective implements GqlDirectiveFactory {
         """
         directive @auth(
             optional: Boolean = false
+            """
+            if resource is not owned by current user field id nulled
+            """
             onlyOwn: Boolean = false
         ) on FIELD_DEFINITION
     `;
@@ -40,7 +42,7 @@ export class AuthDirective implements GqlDirectiveFactory {
 
                     if (directiveArgs) {
                         if (directiveArgs.onlyOwn) {
-                            onlyOwnNullableTypes(fieldConfig);
+                            ownershipNullableTypes(fieldConfig);
                         }
 
                         const { resolve } = fieldConfig;
@@ -59,20 +61,26 @@ export class AuthDirective implements GqlDirectiveFactory {
                             const user: CurrentUser | undefined = await context
                                 .req[userPromiseSymbol];
 
-                            const result = (await resolve?.(
-                                parent,
-                                args,
-                                context,
-                                info,
-                            )) as Result;
+                            const firstResolve = (() =>
+                                resolve?.(
+                                    parent,
+                                    args,
+                                    context,
+                                    info,
+                                )) as RuleNext;
 
-                            return [
+                            // rules are lazy
+                            // call next one if they passed
+                            const finalResolve = [
                                 optionalRule(user),
-                                onlyOwnRule(parent, info, user),
+                                ownershipRule(parent, info, user),
                             ].reduce(
-                                (result, rule) => rule(result, directiveArgs),
-                                result,
+                                (nextRule, rule) =>
+                                    rule(nextRule, directiveArgs),
+                                firstResolve,
                             );
+
+                            return finalResolve();
                         };
                     }
 
@@ -86,12 +94,12 @@ export class AuthDirective implements GqlDirectiveFactory {
     ): Promise<CurrentUser | undefined> {
         const token = req.header('Authorization')?.replace('Bearer ', '');
 
-        assert(token);
+        if (token) {
+            const user = await this.authService.fromToken(token);
 
-        const maybeUser = await this.authService.fromToken(token);
-
-        if (maybeUser) {
-            req[currentUserSymbol] = { id: maybeUser.id };
+            if (user) {
+                req[currentUserSymbol] = user;
+            }
         }
 
         return req[currentUserSymbol];
