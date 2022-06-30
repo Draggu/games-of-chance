@@ -1,15 +1,15 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQlModuleConfig } from 'config/graphql.module.config';
+import { TypeOrmModuleConfig } from 'config/typeorm.module.config';
 import { DirectivesModule } from 'directives/directives.module';
 import { AlwaysAgreePaymentsModule } from 'modules/always-agree-payments/always-agree-payments.module';
 import { AuthModule } from 'modules/auth/auth.module';
 import { GamesModule } from 'modules/games/games.module';
 import { UserModule } from 'modules/user/user.module';
-import { join } from 'path';
 @Module({
     imports: [
         AlwaysAgreePaymentsModule,
@@ -23,22 +23,7 @@ import { join } from 'path';
             imports: [DirectivesModule],
         }),
         TypeOrmModule.forRootAsync({
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
-                type: 'postgres',
-                host: config.get('DB_HOST'),
-                port: config.get('DB_PORT'),
-                username: config.get('DB_USER', 'postgres'),
-                password: config.get('DB_PASSWORD'),
-                database: config.get('DB_NAME'),
-                autoLoadEntities: true,
-                migrations: [join(__dirname, '../migrations/*.{ts,js}')],
-                migrationsRun: true,
-                synchronize: config.get('NODE_ENV') !== 'production',
-                logging: config.get('NODE_ENV') !== 'production' && ['query'],
-                useUTC: true,
-                // dropSchema: true,
-            }),
+            useClass: TypeOrmModuleConfig,
         }),
     ],
 })

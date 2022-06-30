@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+    server:
+        build: .
+        restart: unless-stopped
+        environment:
+            NODE_ENV: production
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_NAME: postgres
+            DB_PASSWORD: postgres
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+            REDIS_PASSWORD: redis
+            PORT: '8080'
+            ROULETTE_FULL_ROUND_TIME: 20
+            ROULETTE_ALLOW_BET_TIME: 15
+        ports:
+            - '8080:8080'
+        depends_on:
+            - postgres
+            - redis
+    postgres:
+        image: postgres:14.3
+        restart: unless-stopped
+        environment:
+            - POSTGRES_USERNAME=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - '5432:5432'
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+    redis:
+        image: docker.io/bitnami/redis:6.2
+        restart: unless-stopped
+        environment:
+            REDIS_PASSWORD: redis
+            REDIS_DISABLE_COMMANDS: FLUSHDB,FLUSHALL
+        ports:
+            - '6379:6379'
+        volumes:
+            - 'redis_data:/bitnami/redis/data'
+volumes:
+    postgres_data:
+        driver: local
+    redis_data:
+        driver: local

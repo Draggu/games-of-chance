@@ -25,6 +25,7 @@ class RedisCoreModule {
                     lazyConnect: true,
                     host: config.get('REDIS_HOST'),
                     port: config.get('REDIS_PORT'),
+                    password: config.get('REDIS_PASSWORD'),
                 });
 
                 await redis.connect();
