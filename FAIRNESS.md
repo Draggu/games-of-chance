@@ -11,14 +11,14 @@ Every game result is calculated using following formula
 where `privateKey`, `publicKey` and `nonce` are delivered by game.
 
 ```ts
-function reuslt(privateKey: string, publicKey: string, nonce: string | number) {
+function result(privateKey: string, publicKey: string, nonce: string | number) {
     const seed = [privateKey, publicKey, nonce].join('-');
 
     const subHash = createHmac('sha256', seed).digest('hex').substring(0, 8);
 
     const spinNumber = parseInt(subHash, 16);
 
-    return Math.abs(spinNumber) % range;
+    return spinNumber % range;
 }
 ```
 

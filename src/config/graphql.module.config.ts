@@ -33,6 +33,7 @@ export class GraphQlModuleConfig implements GqlOptionsFactory {
     createGqlOptions(): Omit<ApolloDriverConfig, 'driver'> {
         return {
             cors,
+            introspection: true,
             debug: this.config.get('NODE_ENV') !== 'production',
             playground: false,
             subscriptions: {

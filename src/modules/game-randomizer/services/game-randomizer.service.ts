@@ -24,7 +24,7 @@ export class GameRandomizerService {
             .substring(0, 8);
 
         const spinNumber = parseInt(subHash, 16);
-        const roll = Math.abs(spinNumber) % range;
+        const roll = spinNumber % range;
 
         return {
             key: subHash,
