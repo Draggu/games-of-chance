@@ -8,12 +8,10 @@ export const EntityByUserPaginatedDataloader = <T>(
     entity: Type<T>,
     {
         userId,
-        alias,
         orderBy,
     }: {
-        userId: keyof T;
-        alias: string;
-        orderBy: { column: keyof T; order: 'DESC' | 'ASC' };
+        userId: keyof T & string;
+        orderBy: { column: keyof T & string; order: 'DESC' | 'ASC' };
     },
 ) =>
     mixin(
@@ -32,40 +30,24 @@ export const EntityByUserPaginatedDataloader = <T>(
                                 (qb) =>
                                     qb
                                         .select('*')
-                                        .from(entity, alias)
+                                        .from(entity, 'e')
                                         .addSelect(
-                                            `
-                                        RANK() over (
-                                            PARTITION BY ${alias}."${
-                                                userId as string
-                                            }"
-                                            ORDER BY ${alias}."${
-                                                orderBy.column as string
-                                            }" ${orderBy.order}
-                                        ) as "R"
-                                        `,
+                                            'ROW_NUMBER() over (' +
+                                                `PARTITION BY "${userId}" ` +
+                                                `ORDER BY "${orderBy.column}" ${orderBy.order}` +
+                                                ') as r',
                                         )
-                                        .addSelect(
-                                            `"${
-                                                userId as string
-                                            }" as "user_id"`,
-                                        ),
-                                `${alias}s_with_rank`,
+                                        .addSelect(`"${userId}" as "user_id"`),
+                                '',
                             );
 
                         keys.forEach(({ userId, page: { skip, take } }) => {
                             qb.orWhere(
-                                `(
-                                ${alias}s_with_rank.user_id = :userId
-                                    AND
-                                ${alias}s_with_rank."R" > :skip
-                                    AND
-                                ${alias}s_with_rank."R" <= :take
-                                )`,
+                                '(user_id = :userId AND r > :skip AND r <= :take)',
                                 {
                                     userId,
                                     skip,
-                                    take: take + take * skip,
+                                    take: take + skip,
                                 },
                             );
                         });
@@ -82,7 +64,7 @@ export const EntityByUserPaginatedDataloader = <T>(
                     },
                     {
                         cacheKeyFn: ({ userId, page: { skip, take } }) =>
-                            `${userId}${skip}${take}`,
+                            `${userId}_${skip}_${take}`,
                     },
                 );
             }
